@@ -1,24 +1,30 @@
 package com.example.lociapp.screens
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.lociapp.R
 import com.example.lociapp.components.BottomNavigationBar
+import com.example.lociapp.components.GlassIconButton
+import com.example.lociapp.components.ScreenHeader
 import com.example.lociapp.models.ReminderItem
 
 @Composable
@@ -40,25 +46,17 @@ fun RemindersScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Black,
-                    modifier = Modifier.size(28.dp).clickable { navController.popBackStack() }
-                )
-                Text("Reminders", color = Color.Black, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Surface(
-                    modifier = Modifier.clickable { navController.navigate("add_reminder") },
-                    shape = RoundedCornerShape(12.dp),
-                    color = Color.White.copy(alpha = 0.5f)
-                ) {
-                    Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Add, "Add Reminder", tint = Color.Black, modifier = Modifier.size(20.dp))
-                        Text("Add Reminder", color = Color.Black, fontSize = 14.sp)
-                    }
+            ScreenHeader(
+                onBack = { navController.popBackStack() },
+                title = "Reminders",
+                trailing = {
+                    GlassIconButton(
+                        icon = Icons.Default.Add,
+                        contentDescription = "Add Reminder",
+                        onClick = { navController.navigate("add_reminder") }
+                    )
                 }
-            }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -87,40 +85,34 @@ fun RemindersScreen(navController: NavController) {
 @Composable
 fun ReminderCard(reminder: ReminderItem) {
     Surface(
-        modifier = Modifier.fillMaxWidth().height(80.dp),
+        modifier = Modifier.fillMaxWidth().height(84.dp),
         shape = RoundedCornerShape(16.dp),
-        color = if (reminder.isUrgent) Color(0xFFFF4444).copy(alpha = 0.3f) else Color.White.copy(alpha = 0.5f),
+        color = if (reminder.isUrgent) Color(0xFFFF4444).copy(alpha = 0.15f) else Color.White.copy(alpha = 0.5f),
         shadowElevation = 4.dp
     ) {
-        Row(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Surface(
-                modifier = Modifier.size(48.dp),
-                shape = RoundedCornerShape(12.dp),
-                color = if (reminder.isUrgent) Color(0xFFFF4444).copy(alpha = 0.4f) else Color.White.copy(alpha = 0.4f)
-            ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = if (reminder.isUrgent) Icons.Default.Warning else Icons.Default.Notifications,
-                        contentDescription = reminder.title,
-                        tint = if (reminder.isUrgent) Color.Black else Color.Black,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-            }
+        Row(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = reminder.title,
+                modifier = Modifier.size(52.dp).clip(RoundedCornerShape(12.dp)),
+                contentScale = ContentScale.Crop
+            )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
-                Text(reminder.title, color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                if (reminder.isUrgent) {
+                    Text("TIME SENSITIVE", color = Color(0xFFE53935), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                }
+                Text(reminder.title, color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 Text(
                     reminder.description,
-                    color = if (reminder.isUrgent) Color.Red else Color.Black.copy(alpha = 0.6f),
+                    color = if (reminder.isUrgent) Color(0xFFE53935) else Color.Black.copy(alpha = 0.6f),
                     fontSize = 12.sp,
-                    maxLines = 1
+                    maxLines = 1,
+                    fontWeight = if (reminder.isUrgent) FontWeight.SemiBold else FontWeight.Normal
                 )
             }
-
-            Text(reminder.time, color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp)
         }
     }
 }

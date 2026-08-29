@@ -1,28 +1,23 @@
 package com.example.lociapp.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.lociapp.components.ScreenHeader
 
 @Composable
 fun PrivacyPolicyScreen(navController: NavController) {
-    // ✅ Removed Gradient
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -32,26 +27,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Black, // ✅ Changed to Black
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clickable { navController.popBackStack() }
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = "Privacy Policy",
-                    color = Color.Black, // ✅ Changed to Black
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            ScreenHeader(onBack = { navController.popBackStack() }, title = "Privacy Policy")
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -62,7 +38,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
                     .verticalScroll(rememberScrollState()),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.5f) // ✅ Made lighter
+                    containerColor = Color.White.copy(alpha = 0.5f)
                 )
             ) {
                 Column(
@@ -72,21 +48,21 @@ fun PrivacyPolicyScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "Privacy Policy",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "July 2023",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
                     Text(
                         text = "1. Information We Collect",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -122,7 +98,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "2. How We Use Your Information",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -131,7 +107,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "We use the collected data strictly to fulfill our obligations under the terms of our contract.",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
@@ -157,7 +133,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "3. How Your Data Is Shared",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -166,7 +142,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "We share your data with third parties only when necessary to fulfill our contractual obligations or as required by law.",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
@@ -184,7 +160,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "4. Your Control and Permissions",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -193,7 +169,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "You have the right to:",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
@@ -223,7 +199,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "5. Security",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -232,7 +208,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "We take reasonable measures to protect your data from unauthorized access, loss, or damage.",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp
                     )
 
@@ -240,7 +216,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "6. Contact Us",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -249,7 +225,7 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "If you have any questions, concerns, or feedback regarding this Privacy Policy or your data, please contact us at:",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp
                     )
 
@@ -257,12 +233,12 @@ fun PrivacyPolicyScreen(navController: NavController) {
 
                     Text(
                         text = "📧 Email: info@hi-fi.com",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp
                     )
                     Text(
                         text = "🌐 Website: www.hi-fi.com",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp
                     )
                 }
@@ -281,13 +257,13 @@ fun PolicyItem(
     ) {
         Text(
             text = "• $question:",
-            color = Color.Black, // ✅ Changed to Black
+            color = Color.Black,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium
         )
         Text(
             text = "  $answer",
-            color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+            color = Color.Black.copy(alpha = 0.6f),
             fontSize = 13.sp,
             modifier = Modifier.padding(start = 8.dp)
         )

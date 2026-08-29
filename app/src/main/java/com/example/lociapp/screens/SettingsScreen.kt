@@ -83,15 +83,15 @@ fun SettingsScreen(navController: NavController) {
 fun SettingsCard(icon: ImageVector, title: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth().height(56.dp).clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(28.dp),
         color = Color.White.copy(alpha = 0.5f),
         shadowElevation = 2.dp
     ) {
-        Row(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, title, tint = Color.Black, modifier = Modifier.size(24.dp))
+        Row(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, title, tint = Color.Black, modifier = Modifier.size(22.dp))
             Spacer(modifier = Modifier.width(16.dp))
             Text(title, color = Color.Black, fontSize = 16.sp, modifier = Modifier.weight(1f))
-            Icon(Icons.Default.ChevronRight, "Navigate", tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(24.dp))
+            Icon(Icons.Default.ChevronRight, "Navigate", tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(22.dp))
         }
     }
 }

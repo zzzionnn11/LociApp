@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,11 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.lociapp.components.ScreenHeader
 import com.example.lociapp.models.FAQItem
 
 @Composable
 fun FAQScreen(navController: NavController) {
-    var expandedIndex by remember { mutableStateOf(-1) }
+    var expandedIndex by remember { mutableIntStateOf(-1) }
 
     val faqItems = listOf(
         FAQItem(
@@ -36,7 +36,6 @@ fun FAQScreen(navController: NavController) {
         )
     )
 
-    // ✅ Removed Gradient
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -46,26 +45,7 @@ fun FAQScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Black, // ✅ Changed to Black
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clickable { navController.popBackStack() }
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = "FAQ",
-                    color = Color.Black, // ✅ Changed to Black
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            ScreenHeader(onBack = { navController.popBackStack() }, title = "FAQ")
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -73,7 +53,7 @@ fun FAQScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.5f) // ✅ Made lighter
+                    containerColor = Color.White.copy(alpha = 0.5f)
                 )
             ) {
                 Column(
@@ -83,21 +63,21 @@ fun FAQScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "Support",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Welcome to the Loci support page. Here you can find common questions and their answers. Tap on a question below to see its answer.",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         modifier = Modifier.padding(top = 4.dp, bottom = 16.dp)
                     )
 
                     Text(
                         text = "List",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -119,7 +99,7 @@ fun FAQScreen(navController: NavController) {
                             ) {
                                 Text(
                                     text = item.question,
-                                    color = Color.Black, // ✅ Changed to Black
+                                    color = Color.Black,
                                     fontSize = 14.sp,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -129,7 +109,7 @@ fun FAQScreen(navController: NavController) {
                                     else
                                         Icons.Default.ExpandMore,
                                     contentDescription = "Expand",
-                                    tint = Color.Black.copy(alpha = 0.5f) // ✅ Changed to Dark Grey
+                                    tint = Color.Black.copy(alpha = 0.5f)
                                 )
                             }
 
@@ -137,7 +117,7 @@ fun FAQScreen(navController: NavController) {
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = item.answer,
-                                    color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                                    color = Color.Black.copy(alpha = 0.6f),
                                     fontSize = 13.sp,
                                     modifier = Modifier.padding(start = 8.dp)
                                 )
@@ -146,7 +126,7 @@ fun FAQScreen(navController: NavController) {
                             if (index < faqItems.size - 1) {
                                 HorizontalDivider(
                                     modifier = Modifier.padding(vertical = 4.dp),
-                                    color = Color.Black.copy(alpha = 0.1f) // ✅ Changed to Dark Grey
+                                    color = Color.Black.copy(alpha = 0.1f)
                                 )
                             }
                         }
@@ -156,7 +136,7 @@ fun FAQScreen(navController: NavController) {
 
                     Text(
                         text = "Bugs & Crashes",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(bottom = 4.dp)
@@ -164,7 +144,7 @@ fun FAQScreen(navController: NavController) {
 
                     Text(
                         text = "How do I report an issue with the app?",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 14.sp,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
@@ -173,7 +153,7 @@ fun FAQScreen(navController: NavController) {
 
                     Text(
                         text = "Other",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(bottom = 4.dp)
@@ -181,7 +161,7 @@ fun FAQScreen(navController: NavController) {
 
                     Text(
                         text = "Can I find the answer to your question?",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 14.sp,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )

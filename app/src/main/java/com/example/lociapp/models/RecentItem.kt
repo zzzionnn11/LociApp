@@ -5,5 +5,6 @@ data class RecentItem(
     val title: String,
     val description: String,
     val time: String,
-    val imageRes: Int
+    val imageRes: Int,
+    val isUrgent: Boolean = false
 )

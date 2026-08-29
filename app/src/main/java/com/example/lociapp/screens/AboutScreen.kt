@@ -1,15 +1,11 @@
 package com.example.lociapp.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.lociapp.components.ScreenHeader
 import com.example.lociapp.models.TeamMember
 
 @Composable
@@ -32,7 +29,6 @@ fun AboutScreen(navController: NavController) {
         TeamMember("Roy Wilson Rebullo", "🎤")
     )
 
-    // ✅ Removed Gradient, added transparent background
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -42,26 +38,7 @@ fun AboutScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Black, // ✅ Changed to Black
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clickable { navController.popBackStack() }
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = "About Us",
-                    color = Color.Black, // ✅ Changed to Black
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            ScreenHeader(onBack = { navController.popBackStack() }, title = "About Us")
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -69,7 +46,7 @@ fun AboutScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.5f) // ✅ Made lighter for contrast
+                    containerColor = Color.White.copy(alpha = 0.5f)
                 )
             ) {
                 Column(
@@ -79,14 +56,14 @@ fun AboutScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "Designers",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Meet the team!",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -102,7 +79,7 @@ fun AboutScreen(navController: NavController) {
                                 modifier = Modifier
                                     .size(40.dp)
                                     .clip(CircleShape)
-                                    .background(Color.White.copy(alpha = 0.5f)), // ✅ Made lighter
+                                    .background(Color.White.copy(alpha = 0.5f)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -113,7 +90,7 @@ fun AboutScreen(navController: NavController) {
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = member.name,
-                                color = Color.Black, // ✅ Changed to Black
+                                color = Color.Black,
                                 fontSize = 16.sp
                             )
                         }

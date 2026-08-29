@@ -1,21 +1,20 @@
 package com.example.lociapp.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.lociapp.components.ScreenHeader
 
 @Composable
 fun AddReminderScreen(navController: NavController) {
@@ -24,11 +23,7 @@ fun AddReminderScreen(navController: NavController) {
     var reminderDate by remember { mutableStateOf("") }
     var chosenItem by remember { mutableStateOf("") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.5f)) // Dark background from your reference
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -37,34 +32,26 @@ fun AddReminderScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White, // Keep White because background is dark here
-                    modifier = Modifier.size(28.dp).clickable { navController.popBackStack() }
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text("Add Reminder", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            }
+            ScreenHeader(onBack = { navController.popBackStack() }, title = "Add Reminder")
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             val fieldColors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-                focusedBorderColor = Color.White.copy(alpha = 0.3f),
-                unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
-                focusedContainerColor = Color.White.copy(alpha = 0.1f),
-                unfocusedContainerColor = Color.White.copy(alpha = 0.1f),
-                focusedLabelColor = Color.White,
-                unfocusedLabelColor = Color.White.copy(alpha = 0.7f)
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedBorderColor = Color.LightGray,
+                unfocusedBorderColor = Color.LightGray,
+                focusedContainerColor = Color.White.copy(alpha = 0.8f),
+                unfocusedContainerColor = Color.White.copy(alpha = 0.8f),
+                focusedLabelColor = Color.Black.copy(alpha = 0.7f),
+                unfocusedLabelColor = Color.Black.copy(alpha = 0.5f)
             )
 
+            Text("Reminder name", color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp)
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = reminderName,
                 onValueChange = { reminderName = it },
-                label = { Text("Reminder name") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = fieldColors
@@ -73,59 +60,69 @@ fun AddReminderScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value = reminderTime,
-                    onValueChange = { reminderTime = it },
-                    label = { Text("Reminder time") },
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = fieldColors
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Reminder time", color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    OutlinedTextField(
+                        value = reminderTime,
+                        onValueChange = { reminderTime = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = fieldColors
+                    )
+                }
 
-                OutlinedTextField(
-                    value = reminderDate,
-                    onValueChange = { reminderDate = it },
-                    label = { Text("Reminder date") },
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = fieldColors,
-                    trailingIcon = { Icon(Icons.Default.CalendarMonth, "Date", tint = Color.White.copy(alpha = 0.7f)) }
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Reminder date", color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    OutlinedTextField(
+                        value = reminderDate,
+                        onValueChange = { reminderDate = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = fieldColors,
+                        trailingIcon = { Icon(Icons.Default.CalendarMonth, "Date", tint = Color.Black.copy(alpha = 0.5f)) }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            Text("Choose item", color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp)
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = chosenItem,
                 onValueChange = { chosenItem = it },
-                label = { Text("Choose item") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = fieldColors,
-                trailingIcon = { Icon(Icons.Default.ArrowDropDown, "Dropdown", tint = Color.White.copy(alpha = 0.7f)) }
+                trailingIcon = { Icon(Icons.Default.ArrowDropDown, "Dropdown", tint = Color.Black.copy(alpha = 0.5f)) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text("Note: Not Required", color = Color.White.copy(alpha = 0.5f), fontSize = 12.sp)
-
+            Text("Note - Not Required", color = Color.Black.copy(alpha = 0.5f), fontSize = 12.sp)
             Spacer(modifier = Modifier.height(8.dp))
 
             Surface(
                 modifier = Modifier.fillMaxWidth().height(120.dp),
                 shape = RoundedCornerShape(12.dp),
-                color = Color.White.copy(alpha = 0.1f)
+                color = Color.White.copy(alpha = 0.8f),
+                border = BorderStroke(0.5.dp, Color.LightGray)
             ) {}
 
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.fillMaxWidth().height(56.dp).padding(bottom = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .padding(bottom = 16.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.2f))
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.6f))
             ) {
-                Text("Save reminder", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text("Save reminder", color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold)
             }
         }
     }

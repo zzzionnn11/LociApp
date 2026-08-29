@@ -9,16 +9,16 @@ private val DarkColorScheme = darkColorScheme(
     primary = Color.White,
     secondary = Color.White,
     tertiary = Color.White,
-    background = Color.Transparent, // Crucial change!
-    surface = Color.Transparent     // Crucial change!
+    background = Color.Transparent,
+    surface = Color.Transparent
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF667eea),
     secondary = Color(0xFF764ba2),
     tertiary = Color(0xFFBB86FC),
-    background = Color(0xFF667eea),
-    surface = Color(0xFF667eea)
+    background = Color.Transparent,
+    surface = Color.Transparent
 )
 
 @Composable

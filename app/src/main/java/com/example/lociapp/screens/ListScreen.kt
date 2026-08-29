@@ -2,13 +2,16 @@ package com.example.lociapp.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -33,7 +36,7 @@ import com.example.lociapp.models.RecentItem
 fun ListScreen(navController: NavController) {
     val items = remember {
         listOf(
-            RecentItem(1, "Tech Book", "Tech Book at living room's table", "10:00 am", R.drawable.ic_launcher_foreground),
+            RecentItem(1, "Tech Book", "Tech Book at living room's table", "10:00 am", R.drawable.ic_launcher_foreground, isUrgent = true),
             RecentItem(2, "Camera in bag", "Bring camera to the function", "12:00 pm", R.drawable.ic_launcher_foreground),
             RecentItem(3, "Headphones", "Don't forget the headphones for...", "1:00 pm", R.drawable.ic_launcher_foreground),
             RecentItem(4, "Wallet", "Wallet in the drawer", "2:00 pm", R.drawable.ic_launcher_foreground),
@@ -55,7 +58,7 @@ fun ListScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ✅ SEARCH BAR WITH SUPER THIN OUTLINE (0.5.dp & LightGray)
+            // Search bar - super thin outline
             Surface(
                 modifier = Modifier.fillMaxWidth().height(48.dp),
                 shape = RoundedCornerShape(16.dp),
@@ -69,34 +72,16 @@ fun ListScreen(navController: NavController) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            LazyColumn(modifier = Modifier.weight(1f).padding(bottom = 80.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.weight(1f).padding(bottom = 80.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 items(items) { item ->
-                    Surface(
-                        modifier = Modifier.fillMaxWidth().height(72.dp).clickable { navController.navigate("item_detail/${item.id}") },
-                        shape = RoundedCornerShape(16.dp),
-                        color = Color.White.copy(alpha = 0.5f),
-                        shadowElevation = 4.dp
-                    ) {
-                        Row(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = item.imageRes),
-                                contentDescription = item.title,
-                                modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-
-                            Spacer(modifier = Modifier.width(16.dp))
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(item.title, color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                                Text(item.description, color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp, maxLines = 1)
-                            }
-
-                            Icon(Icons.Default.ChevronRight, "Navigate", tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(24.dp))
-                        }
-                    }
+                    ListPhotoTile(item = item, onClick = { navController.navigate("item_detail/${item.id}") })
                 }
             }
         }
@@ -109,6 +94,35 @@ fun ListScreen(navController: NavController) {
                 onSettingsClick = { navController.navigate("settings") },
                 onCameraClick = { println("Camera opened from List!") }
             )
+        }
+    }
+}
+
+@Composable
+fun ListPhotoTile(item: RecentItem, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable { onClick() }
+    ) {
+        Image(
+            painter = painterResource(id = item.imageRes),
+            contentDescription = item.title,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(8.dp)
+                .size(28.dp)
+                .clip(CircleShape)
+                .background(Color.Black.copy(alpha = 0.35f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(Icons.Default.MoreVert, "Options", tint = Color.White, modifier = Modifier.size(16.dp))
         }
     }
 }

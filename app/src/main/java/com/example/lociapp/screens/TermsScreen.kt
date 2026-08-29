@@ -1,29 +1,24 @@
 package com.example.lociapp.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.lociapp.components.ScreenHeader
 
 @Composable
 fun TermsScreen(navController: NavController) {
-    // ✅ Removed Gradient
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -33,26 +28,7 @@ fun TermsScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Black, // ✅ Changed to Black
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clickable { navController.popBackStack() }
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = "Terms & Conditions",
-                    color = Color.Black, // ✅ Changed to Black
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            ScreenHeader(onBack = { navController.popBackStack() }, title = "Terms & Conditions")
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -63,7 +39,7 @@ fun TermsScreen(navController: NavController) {
                     .verticalScroll(rememberScrollState()),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.5f) // ✅ Made lighter
+                    containerColor = Color.White.copy(alpha = 0.5f)
                 )
             ) {
                 Column(
@@ -73,14 +49,14 @@ fun TermsScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "Terms & Conditions",
-                        color = Color.Black, // ✅ Changed to Black
+                        color = Color.Black,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Last Updated: July 2023",
-                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+                        color = Color.Black.copy(alpha = 0.6f),
                         fontSize = 14.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -140,20 +116,20 @@ fun TermsSection(
     ) {
         Text(
             text = title,
-            color = Color.Black, // ✅ Changed to Black
+            color = Color.Black,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = content,
-            color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
+            color = Color.Black.copy(alpha = 0.6f),
             fontSize = 14.sp,
             lineHeight = 20.sp
         )
         Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider(
-            color = Color.Black.copy(alpha = 0.1f) // ✅ Changed to Dark Grey
+            color = Color.Black.copy(alpha = 0.1f)
         )
     }
 }

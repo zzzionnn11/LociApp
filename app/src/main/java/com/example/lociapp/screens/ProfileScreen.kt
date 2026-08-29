@@ -40,7 +40,7 @@ fun ProfileScreen(navController: NavController) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White,
+                    tint = Color.Black, // ✅ Changed to Black
                     modifier = Modifier
                         .size(28.dp)
                         .clickable { navController.popBackStack() }
@@ -48,7 +48,7 @@ fun ProfileScreen(navController: NavController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = "Profile",
-                    color = Color.White,
+                    color = Color.Black, // ✅ Changed to Black
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -60,7 +60,7 @@ fun ProfileScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.15f)
+                    containerColor = Color.White.copy(alpha = 0.5f) // ✅ Made lighter
                 )
             ) {
                 Column(
@@ -73,13 +73,13 @@ fun ProfileScreen(navController: NavController) {
                         modifier = Modifier
                             .size(100.dp)
                             .clip(CircleShape)
-                            .background(Color.White.copy(alpha = 0.2f)),
+                            .background(Color.White.copy(alpha = 0.5f)), // ✅ Made lighter
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Profile",
-                            tint = Color.White,
+                            tint = Color.Black, // ✅ Changed to Black
                             modifier = Modifier.size(60.dp)
                         )
                     }
@@ -88,21 +88,21 @@ fun ProfileScreen(navController: NavController) {
 
                     Text(
                         text = "John Michael Santos",
-                        color = Color.White,
+                        color = Color.Black, // ✅ Changed to Black
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "User since July 11, 2026",
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
                         fontSize = 14.sp
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     HorizontalDivider(
-                        color = Color.White.copy(alpha = 0.2f)
+                        color = Color.Black.copy(alpha = 0.2f) // ✅ Changed to Dark Grey
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -120,13 +120,13 @@ fun ProfileScreen(navController: NavController) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Logout,
                             contentDescription = "Sign Out",
-                            tint = Color.White,
+                            tint = Color.Black, // ✅ Changed to Black
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Sign out",
-                            color = Color.White,
+                            color = Color.Black, // ✅ Changed to Black
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -147,13 +147,13 @@ fun ProfileScreen(navController: NavController) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete Account",
-                            tint = Color.White.copy(alpha = 0.8f),
+                            tint = Color.Black, // ✅ Changed to Black
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Delete Account",
-                            color = Color.White.copy(alpha = 0.8f),
+                            color = Color.Black, // ✅ Changed to Black
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium
                         )

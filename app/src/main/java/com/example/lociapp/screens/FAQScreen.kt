@@ -19,7 +19,7 @@ import com.example.lociapp.models.FAQItem
 
 @Composable
 fun FAQScreen(navController: NavController) {
-    var expandedIndex by remember { mutableIntStateOf(-1) }
+    var expandedIndex by remember { mutableStateOf(-1) }
 
     val faqItems = listOf(
         FAQItem(
@@ -53,7 +53,7 @@ fun FAQScreen(navController: NavController) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White,
+                    tint = Color.Black, // ✅ Changed to Black
                     modifier = Modifier
                         .size(28.dp)
                         .clickable { navController.popBackStack() }
@@ -61,7 +61,7 @@ fun FAQScreen(navController: NavController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = "FAQ",
-                    color = Color.White,
+                    color = Color.Black, // ✅ Changed to Black
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -73,7 +73,7 @@ fun FAQScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.15f)
+                    containerColor = Color.White.copy(alpha = 0.5f) // ✅ Made lighter
                 )
             ) {
                 Column(
@@ -83,21 +83,21 @@ fun FAQScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "Support",
-                        color = Color.White,
+                        color = Color.Black, // ✅ Changed to Black
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Welcome to the Loci support page. Here you can find common questions and their answers. Tap on a question below to see its answer.",
-                        color = Color.White.copy(alpha = 0.8f),
+                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
                         fontSize = 14.sp,
                         modifier = Modifier.padding(top = 4.dp, bottom = 16.dp)
                     )
 
                     Text(
                         text = "List",
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -119,7 +119,7 @@ fun FAQScreen(navController: NavController) {
                             ) {
                                 Text(
                                     text = item.question,
-                                    color = Color.White,
+                                    color = Color.Black, // ✅ Changed to Black
                                     fontSize = 14.sp,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -129,7 +129,7 @@ fun FAQScreen(navController: NavController) {
                                     else
                                         Icons.Default.ExpandMore,
                                     contentDescription = "Expand",
-                                    tint = Color.White.copy(alpha = 0.5f)
+                                    tint = Color.Black.copy(alpha = 0.5f) // ✅ Changed to Dark Grey
                                 )
                             }
 
@@ -137,7 +137,7 @@ fun FAQScreen(navController: NavController) {
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = item.answer,
-                                    color = Color.White.copy(alpha = 0.7f),
+                                    color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
                                     fontSize = 13.sp,
                                     modifier = Modifier.padding(start = 8.dp)
                                 )
@@ -146,7 +146,7 @@ fun FAQScreen(navController: NavController) {
                             if (index < faqItems.size - 1) {
                                 HorizontalDivider(
                                     modifier = Modifier.padding(vertical = 4.dp),
-                                    color = Color.White.copy(alpha = 0.1f)
+                                    color = Color.Black.copy(alpha = 0.1f) // ✅ Changed to Dark Grey
                                 )
                             }
                         }
@@ -156,7 +156,7 @@ fun FAQScreen(navController: NavController) {
 
                     Text(
                         text = "Bugs & Crashes",
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(bottom = 4.dp)
@@ -164,7 +164,7 @@ fun FAQScreen(navController: NavController) {
 
                     Text(
                         text = "How do I report an issue with the app?",
-                        color = Color.White,
+                        color = Color.Black, // ✅ Changed to Black
                         fontSize = 14.sp,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
@@ -173,7 +173,7 @@ fun FAQScreen(navController: NavController) {
 
                     Text(
                         text = "Other",
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(bottom = 4.dp)
@@ -181,7 +181,7 @@ fun FAQScreen(navController: NavController) {
 
                     Text(
                         text = "Can I find the answer to your question?",
-                        color = Color.White,
+                        color = Color.Black, // ✅ Changed to Black
                         fontSize = 14.sp,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )

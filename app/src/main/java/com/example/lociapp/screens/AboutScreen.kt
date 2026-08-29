@@ -2,19 +2,7 @@ package com.example.lociapp.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -61,7 +49,7 @@ fun AboutScreen(navController: NavController) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White,
+                    tint = Color.Black, // ✅ Changed to Black
                     modifier = Modifier
                         .size(28.dp)
                         .clickable { navController.popBackStack() }
@@ -69,7 +57,7 @@ fun AboutScreen(navController: NavController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = "About Us",
-                    color = Color.White,
+                    color = Color.Black, // ✅ Changed to Black
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -81,7 +69,7 @@ fun AboutScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.15f)
+                    containerColor = Color.White.copy(alpha = 0.5f) // ✅ Made lighter for contrast
                 )
             ) {
                 Column(
@@ -91,14 +79,14 @@ fun AboutScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "Designers",
-                        color = Color.White,
+                        color = Color.Black, // ✅ Changed to Black
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Meet the team!",
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
                         fontSize = 14.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -114,7 +102,7 @@ fun AboutScreen(navController: NavController) {
                                 modifier = Modifier
                                     .size(40.dp)
                                     .clip(CircleShape)
-                                    .background(Color.White.copy(alpha = 0.15f)),
+                                    .background(Color.White.copy(alpha = 0.5f)), // ✅ Made lighter
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -125,7 +113,7 @@ fun AboutScreen(navController: NavController) {
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = member.name,
-                                color = Color.White,
+                                color = Color.Black, // ✅ Changed to Black
                                 fontSize = 16.sp
                             )
                         }

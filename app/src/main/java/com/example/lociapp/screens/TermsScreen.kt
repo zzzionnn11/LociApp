@@ -40,7 +40,7 @@ fun TermsScreen(navController: NavController) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White,
+                    tint = Color.Black, // ✅ Changed to Black
                     modifier = Modifier
                         .size(28.dp)
                         .clickable { navController.popBackStack() }
@@ -48,7 +48,7 @@ fun TermsScreen(navController: NavController) {
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
                     text = "Terms & Conditions",
-                    color = Color.White,
+                    color = Color.Black, // ✅ Changed to Black
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -63,7 +63,7 @@ fun TermsScreen(navController: NavController) {
                     .verticalScroll(rememberScrollState()),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.15f)
+                    containerColor = Color.White.copy(alpha = 0.5f) // ✅ Made lighter
                 )
             ) {
                 Column(
@@ -73,14 +73,14 @@ fun TermsScreen(navController: NavController) {
                 ) {
                     Text(
                         text = "Terms & Conditions",
-                        color = Color.White,
+                        color = Color.Black, // ✅ Changed to Black
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Last Updated: July 2023",
-                        color = Color.White.copy(alpha = 0.6f),
+                        color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
                         fontSize = 14.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -140,20 +140,20 @@ fun TermsSection(
     ) {
         Text(
             text = title,
-            color = Color.White,
+            color = Color.Black, // ✅ Changed to Black
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = content,
-            color = Color.White.copy(alpha = 0.8f),
+            color = Color.Black.copy(alpha = 0.6f), // ✅ Changed to Dark Grey
             fontSize = 14.sp,
             lineHeight = 20.sp
         )
         Spacer(modifier = Modifier.height(8.dp))
         HorizontalDivider(
-            color = Color.White.copy(alpha = 0.1f)
+            color = Color.Black.copy(alpha = 0.1f) // ✅ Changed to Dark Grey
         )
     }
 }

@@ -25,82 +25,41 @@ import com.example.lociapp.models.SettingsSection
 @Composable
 fun SettingsScreen(navController: NavController) {
     val settingsSections = listOf(
-        SettingsSection(
-            title = "Account",
-            items = listOf(
-                SettingsItem("Profile", Icons.Default.Person, "profile")
-            )
-        ),
-        SettingsSection(
-            title = "Social",
-            items = listOf(
-                SettingsItem("About us", Icons.Default.Info, "about")
-            )
-        ),
-        SettingsSection(
-            title = "Support",
-            items = listOf(
-                SettingsItem("FAQ", Icons.AutoMirrored.Filled.Help, "faq"),
-                SettingsItem("Language", Icons.Default.Language, null)
-            )
-        ),
-        SettingsSection(
-            title = "Legal",
-            items = listOf(
-                SettingsItem("Privacy Policy", Icons.Default.Lock, "privacy"),
-                SettingsItem("Terms", Icons.Default.DocumentScanner, "terms")
-            )
-        )
+        SettingsSection("Account", listOf(SettingsItem("Profile", Icons.Default.Person, "profile"))),
+        SettingsSection("Social", listOf(SettingsItem("About us", Icons.Default.Info, "about"))),
+        SettingsSection("Support", listOf(
+            SettingsItem("FAQ", Icons.AutoMirrored.Filled.Help, "faq"),
+            SettingsItem("Language", Icons.Default.Language, null)
+        )),
+        SettingsSection("Legal", listOf(
+            SettingsItem("Privacy Policy", Icons.Default.Lock, "privacy"),
+            SettingsItem("Terms", Icons.Default.DocumentScanner, "terms")
+        ))
     )
 
-    // ✅ Removed gradient background
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
-
-            Text(
-                text = "Settings",
-                color = Color.White,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold
-            )
-
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Settings", color = Color.Black, fontSize = 28.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(24.dp))
 
             LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(bottom = 80.dp),
+                modifier = Modifier.weight(1f).padding(bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(settingsSections) { section ->
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = section.title,
-                            color = Color.White.copy(alpha = 0.6f),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
-                        )
-
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(section.title, color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 4.dp, bottom = 4.dp))
                         section.items.forEach { item ->
                             SettingsCard(
                                 icon = item.icon,
                                 title = item.title,
-                                onClick = {
-                                    item.navigationRoute?.let { route ->
-                                        navController.navigate(route)
-                                    }
-                                }
+                                onClick = { item.navigationRoute?.let { route -> navController.navigate(route) } }
                             )
                         }
                     }
@@ -108,67 +67,31 @@ fun SettingsScreen(navController: NavController) {
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-        ) {
+        Box(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter)) {
             BottomNavigationBar(
                 currentScreen = "settings",
                 onHomeClick = { navController.navigate("home") },
                 onListClick = { navController.navigate("list") },
-                onSettingsClick = { /* Already on settings */ },
-                onCameraClick = {
-                    println("Camera opened from Settings!")
-                }
+                onSettingsClick = { },
+                onCameraClick = { println("Camera opened from Settings!") }
             )
         }
     }
 }
 
 @Composable
-fun SettingsCard(
-    icon: ImageVector,
-    title: String,
-    onClick: () -> Unit
-) {
+fun SettingsCard(icon: ImageVector, title: String, onClick: () -> Unit) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .clickable { onClick() },
+        modifier = Modifier.fillMaxWidth().height(56.dp).clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        color = Color.White.copy(alpha = 0.15f),
+        color = Color.White.copy(alpha = 0.5f),
         shadowElevation = 2.dp
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                tint = Color.White,
-                modifier = Modifier.size(24.dp)
-            )
-
+        Row(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, title, tint = Color.Black, modifier = Modifier.size(24.dp))
             Spacer(modifier = Modifier.width(16.dp))
-
-            Text(
-                text = title,
-                color = Color.White,
-                fontSize = 16.sp,
-                modifier = Modifier.weight(1f)
-            )
-
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Navigate",
-                tint = Color.White.copy(alpha = 0.5f),
-                modifier = Modifier.size(24.dp)
-            )
+            Text(title, color = Color.Black, fontSize = 16.sp, modifier = Modifier.weight(1f))
+            Icon(Icons.Default.ChevronRight, "Navigate", tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(24.dp))
         }
     }
 }

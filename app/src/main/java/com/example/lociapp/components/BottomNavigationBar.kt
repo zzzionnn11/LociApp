@@ -3,7 +3,6 @@ package com.example.lociapp.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -12,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,16 +26,12 @@ fun BottomNavigationBar(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
             .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp),
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-        color = Color.White.copy(alpha = 0.3f),
-        shadowElevation = 8.dp,
-        border = androidx.compose.foundation.BorderStroke(
-            0.5.dp,
-            Color.White.copy(alpha = 0.5f)
-        )
+            .padding(bottom = 16.dp)
+            .height(70.dp),
+        shape = RoundedCornerShape(24.dp),
+        color = Color.White.copy(alpha = 0.8f), // Light glass background
+        shadowElevation = 12.dp
     ) {
         Row(
             modifier = Modifier
@@ -46,98 +40,65 @@ fun BottomNavigationBar(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Home - First
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onHomeClick() }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = "Home",
-                    tint = if (currentScreen == "home") Color.White else Color.White.copy(alpha = 0.5f),
-                    modifier = Modifier.size(28.dp)
-                )
-                Text(
-                    text = "Home",
-                    color = if (currentScreen == "home") Color.White else Color.White.copy(alpha = 0.5f),
-                    fontSize = 10.sp
-                )
-            }
+            val tabModifier = Modifier.weight(1f).fillMaxHeight()
 
-            // List - Second
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onListClick() }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.List,
-                    contentDescription = "List",
-                    tint = if (currentScreen == "list") Color.White else Color.White.copy(alpha = 0.5f),
-                    modifier = Modifier.size(28.dp)
-                )
-                Text(
-                    text = "List",
-                    color = if (currentScreen == "list") Color.White else Color.White.copy(alpha = 0.5f),
-                    fontSize = 10.sp
-                )
-            }
-
-            // Settings - Third
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onSettingsClick() }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Settings,
-                    contentDescription = "Settings",
-                    tint = if (currentScreen == "settings") Color.White else Color.White.copy(alpha = 0.5f),
-                    modifier = Modifier.size(28.dp)
-                )
-                Text(
-                    text = "Settings",
-                    color = if (currentScreen == "settings") Color.White else Color.White.copy(alpha = 0.5f),
-                    fontSize = 10.sp
-                )
-            }
-
-            // Camera - Fourth (Last)
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable { onCameraClick() }
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(
-                            Color.White.copy(alpha = 0.2f)
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.CameraAlt,
-                        contentDescription = "Camera",
-                        tint = if (currentScreen == "camera") Color.White else Color.White.copy(alpha = 0.7f),
-                        modifier = Modifier.size(28.dp)
-                    )
+            // Home
+            Box(modifier = tabModifier.clickable { onHomeClick() }, contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (currentScreen == "home") {
+                        Box(
+                            modifier = Modifier.size(44.dp).background(Color.Black.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Filled.Home, "Home", tint = Color.Black, modifier = Modifier.size(24.dp))
+                        }
+                    } else {
+                        Icon(Icons.Filled.Home, "Home", tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(24.dp))
+                    }
+                    Text("Home", color = if (currentScreen == "home") Color.Black else Color.Black.copy(alpha = 0.5f), fontSize = 10.sp)
                 }
-                Text(
-                    text = "Camera",
-                    color = if (currentScreen == "camera") Color.White else Color.White.copy(alpha = 0.5f),
-                    fontSize = 10.sp
-                )
+            }
+
+            // List
+            Box(modifier = tabModifier.clickable { onListClick() }, contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (currentScreen == "list") {
+                        Box(
+                            modifier = Modifier.size(44.dp).background(Color.Black.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.AutoMirrored.Filled.List, "List", tint = Color.Black, modifier = Modifier.size(24.dp))
+                        }
+                    } else {
+                        Icon(Icons.AutoMirrored.Filled.List, "List", tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(24.dp))
+                    }
+                    Text("List", color = if (currentScreen == "list") Color.Black else Color.Black.copy(alpha = 0.5f), fontSize = 10.sp)
+                }
+            }
+
+            // Settings
+            Box(modifier = tabModifier.clickable { onSettingsClick() }, contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (currentScreen == "settings") {
+                        Box(
+                            modifier = Modifier.size(44.dp).background(Color.Black.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Filled.Settings, "Settings", tint = Color.Black, modifier = Modifier.size(24.dp))
+                        }
+                    } else {
+                        Icon(Icons.Filled.Settings, "Settings", tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(24.dp))
+                    }
+                    Text("Settings", color = if (currentScreen == "settings") Color.Black else Color.Black.copy(alpha = 0.5f), fontSize = 10.sp)
+                }
+            }
+
+            // Camera
+            Box(modifier = tabModifier.clickable { onCameraClick() }, contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Filled.CameraAlt, "Camera", tint = if (currentScreen == "camera") Color.Black else Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(24.dp))
+                    Text("Camera", color = if (currentScreen == "camera") Color.Black else Color.Black.copy(alpha = 0.5f), fontSize = 10.sp)
+                }
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.example.lociapp.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,7 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,7 +19,7 @@ import com.example.lociapp.models.FAQItem
 
 @Composable
 fun FAQScreen(navController: NavController) {
-    var expandedIndex by remember { mutableStateOf(-1) }
+    var expandedIndex by remember { mutableIntStateOf(-1) }
 
     val faqItems = listOf(
         FAQItem(
@@ -38,24 +36,15 @@ fun FAQScreen(navController: NavController) {
         )
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF667eea),
-                        Color(0xFF764ba2)
-                    )
-                )
-            )
-    ) {
+    // ✅ Removed Gradient
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

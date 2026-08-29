@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,26 +23,16 @@ import com.example.lociapp.components.BottomNavigationBar
 
 @Composable
 fun ProfileScreen(navController: NavController) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF667eea),
-                        Color(0xFF764ba2)
-                    )
-                )
-            )
-    ) {
+    // ✅ Removed Gradient
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Header with Back Button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -67,7 +56,6 @@ fun ProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Profile Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -81,7 +69,6 @@ fun ProfileScreen(navController: NavController) {
                         .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Avatar
                     Box(
                         modifier = Modifier
                             .size(100.dp)
@@ -120,7 +107,6 @@ fun ProfileScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Sign Out Button
                     Button(
                         onClick = { /* TODO: Sign out */ },
                         modifier = Modifier
@@ -148,7 +134,6 @@ fun ProfileScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Delete Account Button
                     Button(
                         onClick = { /* TODO: Delete account */ },
                         modifier = Modifier
@@ -177,7 +162,6 @@ fun ProfileScreen(navController: NavController) {
             }
         }
 
-        // Bottom Navigation - Home → List → Settings → Camera
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -188,10 +172,7 @@ fun ProfileScreen(navController: NavController) {
                 onHomeClick = { navController.navigate("home") },
                 onListClick = { navController.navigate("list") },
                 onSettingsClick = { navController.navigate("settings") },
-                onCameraClick = {
-                    // TODO: Open camera
-                    println("Camera opened from Profile!")
-                }
+                onCameraClick = { println("Camera opened from Profile!") }
             )
         }
     }

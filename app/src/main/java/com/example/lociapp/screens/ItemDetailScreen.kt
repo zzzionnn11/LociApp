@@ -1,6 +1,5 @@
 package com.example.lociapp.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,7 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,44 +32,24 @@ fun ItemDetailScreen(navController: NavController, itemId: Int) {
         else -> Icons.Default.Book
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF667eea),
-                        Color(0xFF764ba2)
-                    )
-                )
-            )
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
+                .windowInsetsPadding(WindowInsets.statusBars)
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White,
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clickable { navController.popBackStack() }
+                    tint = Color.Black,
+                    modifier = Modifier.size(28.dp).clickable { navController.popBackStack() }
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = itemTitle,
-                    color = Color.White,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Text(itemTitle, color = Color.Black, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -79,102 +57,41 @@ fun ItemDetailScreen(navController: NavController, itemId: Int) {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                color = Color.White.copy(alpha = 0.15f),
+                color = Color.White.copy(alpha = 0.5f),
                 shadowElevation = 8.dp
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)
-                ) {
+                Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
                     Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .clickable { navController.navigate("full_image/$itemId") },
+                        modifier = Modifier.fillMaxWidth().height(200.dp).clickable { navController.navigate("full_image/$itemId") },
                         shape = RoundedCornerShape(12.dp),
-                        color = Color.White.copy(alpha = 0.1f)
+                        color = Color.White.copy(alpha = 0.4f)
                     ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Icon(
-                                    imageVector = itemIcon,
-                                    contentDescription = itemTitle,
-                                    tint = Color.White.copy(alpha = 0.5f),
-                                    modifier = Modifier.size(64.dp)
-                                )
-                                Text(
-                                    text = "Tap to view full image",
-                                    color = Color.White.copy(alpha = 0.5f),
-                                    fontSize = 12.sp,
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(itemIcon, itemTitle, tint = Color.Black, modifier = Modifier.size(64.dp))
+                                Text("Tap to view full image", color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp, modifier = Modifier.padding(top = 8.dp))
                             }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = itemIcon,
-                            contentDescription = itemTitle,
-                            tint = Color.White,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Text(
-                            text = " $itemTitle",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(itemIcon, itemTitle, tint = Color.Black, modifier = Modifier.size(24.dp))
+                        Text(" $itemTitle", color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "📖 Added · July 11 at 5:00 PM",
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 14.sp
-                    )
-
+                    Text("📖 Added · July 11 at 5:00 PM", color = Color.Black.copy(alpha = 0.6f), fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = "🛒 Need by : July 12 at 10:00 AM",
-                        color = Color.White.copy(alpha = 0.7f),
-                        fontSize = 14.sp
-                    )
+                    Text("🛒 Need by : July 12 at 10:00 AM", color = Color.Black.copy(alpha = 0.6f), fontSize = 14.sp)
 
                     Spacer(modifier = Modifier.height(12.dp))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color.Black.copy(alpha = 0.2f))
 
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = Color.White.copy(alpha = 0.2f)
-                    )
-
-                    Text(
-                        text = "🔗 AI Description",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
+                    Text("🔗 AI Description", color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = "A closed book is resting on a round wooden table next to a sofa, with a green plant in the background.",
-                        color = Color.White.copy(alpha = 0.8f),
-                        fontSize = 13.sp,
-                        lineHeight = 20.sp
-                    )
+                    Text("A closed book is resting on a round wooden table next to a sofa, with a green plant in the background.", color = Color.Black.copy(alpha = 0.8f), fontSize = 13.sp, lineHeight = 20.sp)
                 }
             }
         }

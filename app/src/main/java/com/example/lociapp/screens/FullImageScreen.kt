@@ -22,6 +22,16 @@ import com.example.lociapp.components.GlassIconButton
 
 @Composable
 fun FullImageScreen(navController: NavController, itemId: Int) {
+    val itemImage = when (itemId) {
+        1 -> R.drawable.tech_book
+        2 -> R.drawable.camera
+        3 -> R.drawable.headphones
+        4 -> R.drawable.wallet
+        5 -> R.drawable.keys
+        6 -> R.drawable.laptop
+        else -> R.drawable.ic_launcher_foreground
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -40,7 +50,7 @@ fun FullImageScreen(navController: NavController, itemId: Int) {
                 .clickable { navController.popBackStack() }
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = itemImage),
                 contentDescription = "Full item image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop

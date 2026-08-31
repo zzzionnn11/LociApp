@@ -28,14 +28,23 @@ import com.example.lociapp.components.ScreenHeader
 
 @Composable
 fun ItemDetailScreen(navController: NavController, itemId: Int) {
-    val itemTitle = when (itemId) {
-        1 -> "Tech Book"
-        2 -> "Camera in bag"
-        3 -> "Headphones"
-        else -> "Item $itemId"
+    val (itemTitle, itemImage) = when (itemId) {
+        1 -> "Tech Book" to R.drawable.tech_book
+        2 -> "Camera in bag" to R.drawable.camera
+        3 -> "Headphones" to R.drawable.headphones
+        4 -> "Wallet" to R.drawable.wallet
+        5 -> "Keys" to R.drawable.keys
+        6 -> "Laptop" to R.drawable.laptop
+        else -> "Item $itemId" to R.drawable.ic_launcher_foreground
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.item_page_bg),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,7 +74,7 @@ fun ItemDetailScreen(navController: NavController, itemId: Int) {
                     .clickable { navController.navigate("full_image/$itemId") }
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    painter = painterResource(id = itemImage),
                     contentDescription = itemTitle,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop

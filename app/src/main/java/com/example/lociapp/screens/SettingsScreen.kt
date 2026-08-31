@@ -1,5 +1,6 @@
 package com.example.lociapp.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -14,10 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.lociapp.R
 import com.example.lociapp.components.BottomNavigationBar
 import com.example.lociapp.models.SettingsItem
 import com.example.lociapp.models.SettingsSection
@@ -38,6 +43,12 @@ fun SettingsScreen(navController: NavController) {
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.settings_page_bg),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -64,6 +75,27 @@ fun SettingsScreen(navController: NavController) {
                         }
                     }
                 }
+
+                // --- Session / Logout (UI only) ---
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(top = 8.dp)) {
+                        Text("Session", color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(start = 4.dp, bottom = 4.dp))
+                        SettingsCard(
+                            icon = Icons.AutoMirrored.Filled.Logout,
+                            title = "Log out",
+                            tint = Color(0xFFD32F2F),
+                            onClick = {
+                                // TODO: Implement real logout logic (clear session/token, etc).
+                                // Clears the whole back stack so the user can't navigate
+                                // "back" into the app after logging out. Goes to Welcome,
+                                // the true entry point of the auth flow.
+                                navController.navigate("welcome") {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        )
+                    }
+                }
             }
         }
 
@@ -80,7 +112,7 @@ fun SettingsScreen(navController: NavController) {
 }
 
 @Composable
-fun SettingsCard(icon: ImageVector, title: String, onClick: () -> Unit) {
+fun SettingsCard(icon: ImageVector, title: String, onClick: () -> Unit, tint: Color = Color.Black) {
     Surface(
         modifier = Modifier.fillMaxWidth().height(56.dp).clickable { onClick() },
         shape = RoundedCornerShape(28.dp),
@@ -88,10 +120,10 @@ fun SettingsCard(icon: ImageVector, title: String, onClick: () -> Unit) {
         shadowElevation = 2.dp
     ) {
         Row(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, title, tint = Color.Black, modifier = Modifier.size(22.dp))
+            Icon(icon, title, tint = tint, modifier = Modifier.size(22.dp))
             Spacer(modifier = Modifier.width(16.dp))
-            Text(title, color = Color.Black, fontSize = 16.sp, modifier = Modifier.weight(1f))
-            Icon(Icons.Default.ChevronRight, "Navigate", tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(22.dp))
+            Text(title, color = tint, fontSize = 16.sp, modifier = Modifier.weight(1f))
+            Icon(Icons.Default.ChevronRight, "Navigate", tint = tint.copy(alpha = 0.5f), modifier = Modifier.size(22.dp))
         }
     }
 }

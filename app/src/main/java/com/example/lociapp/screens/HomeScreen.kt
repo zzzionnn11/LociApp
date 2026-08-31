@@ -35,15 +35,21 @@ import com.example.lociapp.models.RecentItem
 fun HomeScreen(navController: NavController) {
     val recentItems = remember {
         listOf(
-            RecentItem(1, "Tech Book", "Tech Book at living room's table", "10:00 am", R.drawable.ic_launcher_foreground, isUrgent = true),
-            RecentItem(2, "Camera in bag", "Bring camera to the function", "12:00 pm", R.drawable.ic_launcher_foreground),
-            RecentItem(3, "Headphones", "Don't forget the headphones for...", "1:00 pm", R.drawable.ic_launcher_foreground)
+            RecentItem(1, "Tech Book", "Tech Book at living room's table", "10:00 am", R.drawable.tech_book, isUrgent = true),
+            RecentItem(2, "Camera in bag", "Bring camera to the function", "12:00 pm", R.drawable.camera),
+            RecentItem(3, "Headphones", "Don't forget the headphones for...", "1:00 pm", R.drawable.headphones)
         )
     }
 
     val onCameraClick: () -> Unit = { println("Camera opened from Home!") }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.main_homescreen_bg),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -95,7 +101,7 @@ fun HomeScreen(navController: NavController) {
                     .clip(RoundedCornerShape(24.dp))
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    painter = painterResource(id = R.drawable.glasses),
                     contentDescription = "Most recent snap",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop

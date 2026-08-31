@@ -36,16 +36,22 @@ import com.example.lociapp.models.RecentItem
 fun ListScreen(navController: NavController) {
     val items = remember {
         listOf(
-            RecentItem(1, "Tech Book", "Tech Book at living room's table", "10:00 am", R.drawable.ic_launcher_foreground, isUrgent = true),
-            RecentItem(2, "Camera in bag", "Bring camera to the function", "12:00 pm", R.drawable.ic_launcher_foreground),
-            RecentItem(3, "Headphones", "Don't forget the headphones for...", "1:00 pm", R.drawable.ic_launcher_foreground),
-            RecentItem(4, "Wallet", "Wallet in the drawer", "2:00 pm", R.drawable.ic_launcher_foreground),
-            RecentItem(5, "Keys", "Keys on the hook", "3:00 pm", R.drawable.ic_launcher_foreground),
-            RecentItem(6, "Laptop", "Laptop on the desk", "4:00 pm", R.drawable.ic_launcher_foreground)
+            RecentItem(1, "Tech Book", "Tech Book at living room's table", "10:00 am", R.drawable.tech_book, isUrgent = true),
+            RecentItem(2, "Camera in bag", "Bring camera to the function", "12:00 pm", R.drawable.camera),
+            RecentItem(3, "Headphones", "Don't forget the headphones for...", "1:00 pm", R.drawable.headphones),
+            RecentItem(4, "Wallet", "Wallet in the drawer", "2:00 pm", R.drawable.wallet),
+            RecentItem(5, "Keys", "Keys on the hook", "3:00 pm", R.drawable.keys),
+            RecentItem(6, "Laptop", "Laptop on the desk", "4:00 pm", R.drawable.laptop)
         )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.list_page_bg),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()

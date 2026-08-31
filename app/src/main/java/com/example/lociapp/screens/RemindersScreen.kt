@@ -31,13 +31,19 @@ import com.example.lociapp.models.ReminderItem
 fun RemindersScreen(navController: NavController) {
     val reminders = remember {
         listOf(
-            ReminderItem(1, "Tech Book", "URGENT NEEDED AT 10:00 AM!", "10:00 AM", isUrgent = true),
-            ReminderItem(2, "Camera in bag", "Bring camera to the function", "12:00 PM", isUrgent = false),
-            ReminderItem(3, "Headphones", "Don't forget the headphones for work", "1:00 PM", isUrgent = false)
+            ReminderItem(1, "Tech Book", "URGENT NEEDED AT 10:00 AM!", "10:00 AM", R.drawable.tech_book, isUrgent = true),
+            ReminderItem(2, "Camera in bag", "Bring camera to the function", "12:00 PM", R.drawable.camera, isUrgent = false),
+            ReminderItem(3, "Headphones", "Don't forget the headphones for work", "1:00 PM", R.drawable.headphones, isUrgent = false)
         )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
+        Image(
+            painter = painterResource(id = R.drawable.add_reminders_bg),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,7 +98,7 @@ fun ReminderCard(reminder: ReminderItem) {
     ) {
         Row(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = reminder.imageRes),
                 contentDescription = reminder.title,
                 modifier = Modifier.size(52.dp).clip(RoundedCornerShape(12.dp)),
                 contentScale = ContentScale.Crop

@@ -17,7 +17,6 @@ import androidx.navigation.NavController
 
 @Composable
 fun StartUpScreen(navController: NavController) {
-    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()

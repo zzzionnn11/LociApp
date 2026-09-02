@@ -45,7 +45,7 @@ fun FullImageScreen(navController: NavController, itemId: Int) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp)
-                .padding(top = 56.dp)
+                .padding(top = 64.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .clickable { navController.popBackStack() }
         ) {

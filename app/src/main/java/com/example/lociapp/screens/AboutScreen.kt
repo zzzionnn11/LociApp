@@ -32,8 +32,8 @@ fun AboutScreen(navController: NavController) {
         TeamMember("Shaun Piconada", "Lead Designer", R.drawable.piconada_developer),
         TeamMember("Mark James Punongbayan", "Designer", R.drawable.punongbayan_developer),
         TeamMember("Shan Ramos", "Designer", R.drawable.ramos_developer),
+        TeamMember("Roy Wilson Rebullo", "Designer", R.drawable.rebullo_developer),
         TeamMember("Bryan Regalado", "Designer", R.drawable.regalado_developer),
-        TeamMember("Roy Wilson Rebullo", "Designer", R.drawable.rebullo_developer)
     )
 
     Box(

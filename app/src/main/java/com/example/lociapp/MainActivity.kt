@@ -130,7 +130,10 @@ fun AppNavigation() {
             ItemDetailScreen(navController = navController, itemId = itemId)
         }
 
-        composable("full_image/{itemId}") { backStackEntry ->
+        composable(
+            "full_image/{itemId}",
+            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+        ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getInt("itemId") ?: 1
             FullImageScreen(navController = navController, itemId = itemId)
         }

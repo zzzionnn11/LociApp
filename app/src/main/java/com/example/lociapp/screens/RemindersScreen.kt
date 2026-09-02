@@ -1,5 +1,6 @@
 package com.example.lociapp.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -91,30 +92,39 @@ fun RemindersScreen(navController: NavController) {
 @Composable
 fun ReminderCard(reminder: ReminderItem) {
     Surface(
-        modifier = Modifier.fillMaxWidth().height(84.dp),
-        shape = RoundedCornerShape(16.dp),
-        color = if (reminder.isUrgent) Color(0xFFFF4444).copy(alpha = 0.15f) else Color.White.copy(alpha = 0.5f),
-        shadowElevation = 4.dp
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(84.dp),
+        shape = RoundedCornerShape(20.dp),
+        color = if (reminder.isUrgent) Color(0xFFFF4444).copy(alpha = 0.15f) else Color.White.copy(alpha = 0.4f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.5f))
     ) {
-        Row(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Image(
                 painter = painterResource(id = reminder.imageRes),
                 contentDescription = reminder.title,
-                modifier = Modifier.size(52.dp).clip(RoundedCornerShape(12.dp)),
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(RoundedCornerShape(14.dp)),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                 if (reminder.isUrgent) {
                     Text("TIME SENSITIVE", color = Color(0xFFE53935), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
-                Text(reminder.title, color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                Text(reminder.title, color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Text(
                     reminder.description,
                     color = if (reminder.isUrgent) Color(0xFFE53935) else Color.Black.copy(alpha = 0.6f),
-                    fontSize = 12.sp,
+                    fontSize = 13.sp,
                     maxLines = 1,
                     fontWeight = if (reminder.isUrgent) FontWeight.SemiBold else FontWeight.Normal
                 )

@@ -3,6 +3,7 @@ package com.example.lociapp.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -102,7 +103,7 @@ fun HomeScreen(navController: NavController) {
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.glasses),
-                    contentDescription = "Most recent snap",
+                    contentDescription = "Mini camera glasses",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -124,11 +125,18 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(bottom = 14.dp)
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                        .clickable { onCameraClick() }
-                )
+                        .size(54.dp)
+                        .border(BorderStroke(3.dp, Color.White), CircleShape)
+                        .clickable { onCameraClick() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(Color.White)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -179,36 +187,48 @@ fun RecentItemCard(item: RecentItem, onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(84.dp)
             .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        color = Color.White.copy(alpha = 0.5f),
-        shadowElevation = 4.dp
+        shape = RoundedCornerShape(20.dp),
+        color = Color.White.copy(alpha = 0.4f),
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.5f))
     ) {
-        Row(modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Image(
                 painter = painterResource(id = item.imageRes),
                 contentDescription = item.title,
-                modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp)),
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(14.dp)),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(item.title, color = Color.Black, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text(item.title, color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                     Text(
                         "  •  ${item.time}",
                         color = if (item.isUrgent) Color(0xFFE53935) else Color.Black.copy(alpha = 0.6f),
-                        fontSize = 12.sp,
+                        fontSize = 13.sp,
                         fontWeight = if (item.isUrgent) FontWeight.SemiBold else FontWeight.Normal
                     )
                 }
-                Text(item.description, color = Color.Black.copy(alpha = 0.6f), fontSize = 12.sp, maxLines = 1)
+                Text(item.description, color = Color.Black.copy(alpha = 0.6f), fontSize = 13.sp, maxLines = 1)
             }
 
-            Icon(Icons.Default.MoreVert, "Options", tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "Options",
+                tint = Color.Black.copy(alpha = 0.4f),
+                modifier = Modifier.size(22.dp)
+            )
         }
     }
 }

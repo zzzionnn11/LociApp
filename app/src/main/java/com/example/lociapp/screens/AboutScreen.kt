@@ -2,7 +2,17 @@ package com.example.lociapp.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -13,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -29,11 +38,11 @@ import com.example.lociapp.models.TeamMember
 @Composable
 fun AboutScreen(navController: NavController) {
     val teamMembers = listOf(
-        TeamMember("Shaun Piconada", "Lead Designer", R.drawable.piconada_developer),
-        TeamMember("Mark James Punongbayan", "Designer", R.drawable.punongbayan_developer),
-        TeamMember("Shan Ramos", "Designer", R.drawable.ramos_developer),
-        TeamMember("Roy Wilson Rebullo", "Designer", R.drawable.rebullo_developer),
-        TeamMember("Bryan Regalado", "Designer", R.drawable.regalado_developer),
+        TeamMember("Shaun Piconada", "Lead Developer", R.drawable.piconada_developer),
+        TeamMember("Mark James Punongbayan", "Developer", R.drawable.punongbayan_developer),
+        TeamMember("Shan Ramos", "Developer", R.drawable.ramos_developer),
+        TeamMember("Roy Wilson Rebullo", "Developer", R.drawable.rebullo_developer),
+        TeamMember("Bryan Regalado", "Developer", R.drawable.regalado_developer),
     )
 
     Box(
@@ -63,7 +72,7 @@ fun AboutScreen(navController: NavController) {
                 }
 
                 Text(
-                    text = "Designers",
+                    text = "Developers",
                     color = Color.Black,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold

@@ -83,7 +83,7 @@ fun RemindersScreen(navController: NavController) {
                 onHomeClick = { navController.navigate("home") },
                 onListClick = { navController.navigate("list") },
                 onSettingsClick = { navController.navigate("settings") },
-                onCameraClick = { println("Camera opened from Reminders!") }
+                onCameraClick = { navController.navigate("camera") }
             )
         }
     }

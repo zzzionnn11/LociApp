@@ -98,7 +98,7 @@ fun ListScreen(navController: NavController) {
                 onHomeClick = { navController.navigate("home") },
                 onListClick = { },
                 onSettingsClick = { navController.navigate("settings") },
-                onCameraClick = { println("Camera opened from List!") }
+                onCameraClick = { navController.navigate("camera") }
             )
         }
     }

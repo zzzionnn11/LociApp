@@ -1,5 +1,6 @@
 package com.example.lociapp.auth.ui
 
+import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -20,20 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * Forgot-password screen — faithful port of LociLogin's
- * ForgotPasswordScreen, reached from Login's "Forgot Password" link.
- *
- * UI ONLY: "Send Reset Link" shows a placeholder Toast and navigates
- * back — no email is actually sent.
+ * Local app: no email can be sent, so the user types their email and a
+ * new password, and the password is updated in the phone's database.
  */
 @Composable
 fun ForgotPasswordScreen(onBackClick: () -> Unit) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    val db = remember { UserDatabase(context) }
 
     Column(
         modifier = Modifier
@@ -52,7 +53,7 @@ fun ForgotPasswordScreen(onBackClick: () -> Unit) {
         )
 
         Text(
-            text = "Enter your email and we'll send you a link to reset your password.",
+            text = "Enter your email and choose a new password.",
             fontSize = 14.sp,
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -66,15 +67,33 @@ fun ForgotPasswordScreen(onBackClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth()
         )
 
+        OutlinedTextField(
+            value = newPassword,
+            onValueChange = { newPassword = it },
+            label = { Text("New password") },
+            singleLine = true,
+            colors = appTextFieldColors(),
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp)
+        )
+
         TransparentPillButton(
-            text = "Send Reset Link",
+            text = "Reset Password",
             onClick = {
-                // TODO: Implement real password-reset request.
-                if (email.isBlank()) {
-                    Toast.makeText(context, "Please enter your email", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "Reset link sent!", Toast.LENGTH_SHORT).show()
-                    onBackClick()
+                val cleanEmail = email.trim()
+                when {
+                    !Patterns.EMAIL_ADDRESS.matcher(cleanEmail).matches() ->
+                        Toast.makeText(context, "Please enter a valid email", Toast.LENGTH_SHORT).show()
+                    newPassword.length < 6 ->
+                        Toast.makeText(context, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+                    db.resetPassword(cleanEmail, newPassword) -> {
+                        Toast.makeText(context, "Password updated. You can sign in now.", Toast.LENGTH_LONG).show()
+                        onBackClick()
+                    }
+                    else ->
+                        Toast.makeText(context, "No account found with this email", Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier.padding(top = 24.dp)

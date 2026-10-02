@@ -1,5 +1,16 @@
 package com.example.lociapp.screens
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.view.LifecycleCameraController
+import androidx.camera.view.PreviewView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,22 +26,27 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.lociapp.R
 import com.example.lociapp.components.BottomNavigationBar
 import com.example.lociapp.components.GlassIconButton
 import com.example.lociapp.models.RecentItem
+import java.io.File
+
+private var cameraPermissionAsked = false
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -41,8 +57,57 @@ fun HomeScreen(navController: NavController) {
             RecentItem(3, "Headphones", "Don't forget the headphones for...", "1:00 pm", R.drawable.headphones)
         )
     }
+    val context = LocalContext.current
+    val activity = context as ComponentActivity
 
-    val onCameraClick: () -> Unit = { println("Camera opened from Home!") }
+    var hasPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                    PackageManager.PERMISSION_GRANTED
+        )
+    }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted -> hasPermission = granted }
+
+    // Ask for camera permission the first time Home opens after login
+    LaunchedEffect(Unit) {
+        if (!hasPermission && !cameraPermissionAsked) {
+            cameraPermissionAsked = true
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    // Live camera
+    val cameraController = remember { LifecycleCameraController(context) }
+    DisposableEffect(Unit) { onDispose { cameraController.unbind() } }
+
+    // Take the photo, then go to the confirmation page
+    fun takePhoto() {
+        val folder = File(context.filesDir, "photos").apply { mkdirs() }
+        val file = File(folder, "loci_${System.currentTimeMillis()}.jpg")
+        val options = ImageCapture.OutputFileOptions.Builder(file).build()
+        cameraController.takePicture(
+            options,
+            ContextCompat.getMainExecutor(context),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(result: ImageCapture.OutputFileResults) {
+                    CapturedPhoto.clear()
+                    CapturedPhoto.uri = Uri.fromFile(file)
+                    navController.navigate("photo_confirm")
+                }
+
+                override fun onError(exception: ImageCaptureException) {
+                    Toast.makeText(context, "Could not take photo", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+    }
+
+    val onCameraClick: () -> Unit = {
+        if (hasPermission) takePhoto() else permissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -101,12 +166,26 @@ fun HomeScreen(navController: NavController) {
                     .height(220.dp)
                     .clip(RoundedCornerShape(24.dp))
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.glasses),
-                    contentDescription = "Mini camera glasses",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+                if (hasPermission) {
+                    AndroidView(
+                        modifier = Modifier.fillMaxSize(),
+                        factory = { ctx ->
+                            PreviewView(ctx).apply {
+                                implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                                scaleType = PreviewView.ScaleType.FILL_CENTER
+                                controller = cameraController
+                                cameraController.bindToLifecycle(activity)
+                            }
+                        }
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.glasses),
+                        contentDescription = "Mini camera glasses",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
                 Box(
                     modifier = Modifier
@@ -176,7 +255,7 @@ fun HomeScreen(navController: NavController) {
                 onHomeClick = { },
                 onListClick = { navController.navigate("list") },
                 onSettingsClick = { navController.navigate("settings") },
-                onCameraClick = onCameraClick
+                onCameraClick = { navController.navigate("camera") }
             )
         }
     }

@@ -1,18 +1,27 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.example.lociapp"  // ✅ Changed from "com.lociapp"
+    namespace = "com.example.lociapp"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.lociapp"  // ✅ Changed from "com.lociapp"
+        applicationId = "com.example.lociapp"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+
+        // Reads ANTHROPIC_API_KEY from local.properties (this file is not uploaded to GitHub)
+        val localProps = Properties().apply {
+            val file = rootProject.file("local.properties")
+            if (file.exists()) file.inputStream().use { load(it) }
+        }
+        buildConfigField("String", "ANTHROPIC_API_KEY", "\"${localProps.getProperty("ANTHROPIC_API_KEY", "")}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -34,6 +43,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -49,6 +59,11 @@ dependencies {
 
     implementation(libs.navigation.compose)
     implementation(libs.material.icons.extended)
+
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

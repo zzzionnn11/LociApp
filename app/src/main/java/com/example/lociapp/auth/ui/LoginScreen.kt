@@ -1,5 +1,7 @@
 package com.example.lociapp.auth.ui
 
+import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -29,12 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
- * Login screen — faithful port of LociLogin's SignInScreen, same layout,
- * copy, and components (AppBackgroundGradient / TransparentPillButton /
- * BackButton from AppComponents.kt).
- *
- * UI ONLY: the Sign in button, social buttons, and Forgot Password link
- * do not validate or authenticate anything.
+ * Login screen. Checks the email + password against the local database on the phone.
  */
 @Composable
 fun LoginScreen(
@@ -43,9 +41,13 @@ fun LoginScreen(
     onBackClick: () -> Unit,
     onForgotPasswordClick: () -> Unit
 ) {
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
+    val db = remember { UserDatabase(context) }
+
+    fun toast(message: String) = Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 
     Column(
         modifier = Modifier
@@ -67,6 +69,7 @@ fun LoginScreen(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
+            singleLine = true,
             colors = appTextFieldColors(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth()
@@ -76,6 +79,7 @@ fun LoginScreen(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
+            singleLine = true,
             colors = appTextFieldColors(),
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
@@ -102,30 +106,26 @@ fun LoginScreen(
             )
         }
 
-        Text(
-            text = "or",
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 20.dp)
-        )
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 8.dp)
-        ) {
-            SocialSignInRow(
-                onFacebookClick = { /* TODO: Implement Facebook sign-in */ },
-                onGoogleClick = { /* TODO: Implement Google sign-in */ },
-                onAppleClick = { /* TODO: Implement Apple sign-in */ }
-            )
-        }
 
         TransparentPillButton(
             text = "Sign in",
             onClick = {
-                // TODO: Implement login logic (validation + authentication)
-                onLoginClick()
+                val cleanEmail = email.trim()
+                when {
+                    cleanEmail.isEmpty() || password.isEmpty() ->
+                        toast("Please enter your email and password")
+                    !Patterns.EMAIL_ADDRESS.matcher(cleanEmail).matches() ->
+                        toast("Please enter a valid email")
+                    else -> {
+                        val user = db.login(cleanEmail, password)
+                        if (user == null) {
+                            toast("Wrong email or password")
+                        } else {
+                            Session.login(user, rememberMe)
+                            onLoginClick()
+                        }
+                    }
+                }
             },
             modifier = Modifier.padding(top = 24.dp)
         )

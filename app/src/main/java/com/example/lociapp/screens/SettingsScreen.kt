@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.lociapp.R
+import com.example.lociapp.auth.ui.Session
 import com.example.lociapp.components.BottomNavigationBar
 import com.example.lociapp.models.SettingsItem
 import com.example.lociapp.models.SettingsSection
@@ -89,6 +90,7 @@ fun SettingsScreen(navController: NavController) {
                                 // Clears the whole back stack so the user can't navigate
                                 // "back" into the app after logging out. Goes to Welcome,
                                 // the true entry point of the auth flow.
+                                Session.logout()
                                 navController.navigate("welcome") {
                                     popUpTo(0) { inclusive = true }
                                 }
@@ -105,7 +107,7 @@ fun SettingsScreen(navController: NavController) {
                 onHomeClick = { navController.navigate("home") },
                 onListClick = { navController.navigate("list") },
                 onSettingsClick = { },
-                onCameraClick = { println("Camera opened from Settings!") }
+                onCameraClick = { navController.navigate("camera") }
             )
         }
     }

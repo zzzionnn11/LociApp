@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,20 +18,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import com.example.lociapp.R
 import com.example.lociapp.components.GlassIconButton
+import com.example.lociapp.db.ItemRepository
 
 @Composable
 fun FullImageScreen(navController: NavController, itemId: Int) {
-    val itemImage = when (itemId) {
-        1 -> R.drawable.tech_book
-        2 -> R.drawable.camera
-        3 -> R.drawable.headphones
-        4 -> R.drawable.wallet
-        5 -> R.drawable.keys
-        6 -> R.drawable.laptop
-        else -> R.drawable.ic_launcher_foreground
-    }
+    val dbItem = remember(itemId) { ItemRepository.getItemById(itemId) }
 
     Box(
         modifier = Modifier
@@ -49,12 +44,22 @@ fun FullImageScreen(navController: NavController, itemId: Int) {
                 .clip(RoundedCornerShape(20.dp))
                 .clickable { navController.popBackStack() }
         ) {
-            Image(
-                painter = painterResource(id = itemImage),
-                contentDescription = "Full item image",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+            if (dbItem != null && !dbItem.imageUri.isNullOrEmpty()) {
+                AsyncImage(
+                    model = dbItem.imageUri,
+                    contentDescription = dbItem.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                val imageRes = dbItem?.imageRes?.takeIf { it != 0 } ?: R.drawable.ic_launcher_foreground
+                Image(
+                    painter = painterResource(id = imageRes),
+                    contentDescription = dbItem?.title ?: "Full item image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
 
         GlassIconButton(

@@ -23,10 +23,13 @@ import com.example.lociapp.screens.*
 import com.example.lociapp.ui.theme.LociAppTheme
 import com.example.lociapp.auth.ui.Session
 
+import com.example.lociapp.db.ItemRepository
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Session.init(applicationContext)
+        ItemRepository.init(applicationContext)
         setContent {
             LociAppTheme {
                 Surface(
@@ -146,6 +149,14 @@ fun AppNavigation() {
         ) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getInt("itemId") ?: 1
             ItemDetailScreen(navController = navController, itemId = itemId)
+        }
+
+        composable(
+            "edit_item/{itemId}",
+            arguments = listOf(navArgument("itemId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getInt("itemId") ?: 1
+            EditItemScreen(navController = navController, itemId = itemId)
         }
 
         composable(

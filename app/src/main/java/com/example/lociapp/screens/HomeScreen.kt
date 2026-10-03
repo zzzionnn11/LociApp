@@ -40,23 +40,23 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import com.example.lociapp.R
 import com.example.lociapp.components.BottomNavigationBar
 import com.example.lociapp.components.GlassIconButton
-import com.example.lociapp.models.RecentItem
+import com.example.lociapp.db.ItemRepository
+import com.example.lociapp.models.ItemEntity
 import java.io.File
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 
 private var cameraPermissionAsked = false
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val recentItems = remember {
-        listOf(
-            RecentItem(1, "Tech Book", "Tech Book at living room's table", "10:00 am", R.drawable.tech_book, isUrgent = true),
-            RecentItem(2, "Camera in bag", "Bring camera to the function", "12:00 pm", R.drawable.camera),
-            RecentItem(3, "Headphones", "Don't forget the headphones for...", "1:00 pm", R.drawable.headphones)
-        )
-    }
+    val itemsList by ItemRepository.items.collectAsState()
+    val recentItems = remember(itemsList) { itemsList.take(3) }
+
     val context = LocalContext.current
     val activity = context as ComponentActivity
 
@@ -107,7 +107,6 @@ fun HomeScreen(navController: NavController) {
     val onCameraClick: () -> Unit = {
         if (hasPermission) takePhoto() else permissionLauncher.launch(Manifest.permission.CAMERA)
     }
-
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -243,8 +242,15 @@ fun HomeScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             LazyColumn(modifier = Modifier.weight(1f).padding(bottom = 80.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(recentItems) { item ->
-                    RecentItemCard(item = item, onClick = { navController.navigate("item_detail/${item.id}") })
+                items(recentItems, key = { it.id }) { item ->
+                    RecentItemCard(
+                        item = item,
+                        onEditClick = { navController.navigate("edit_item/${item.id}") },
+                        onDeleteClick = {
+                            ItemRepository.deleteItem(item.id)
+                            Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show()
+                        }
+                    )
                 }
             }
         }
@@ -262,52 +268,163 @@ fun HomeScreen(navController: NavController) {
 }
 
 @Composable
-fun RecentItemCard(item: RecentItem, onClick: () -> Unit) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(84.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(20.dp),
-        color = Color.White.copy(alpha = 0.4f),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.5f))
-    ) {
-        Row(
+fun RecentItemCard(
+    item: ItemEntity,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    var showMenu by remember { mutableStateOf(false) }
+
+    val displayTime = when {
+        item.reminderTime.isNotEmpty() -> item.reminderTime
+        item.addedTime.isNotEmpty() -> item.addedTime
+        else -> "Recently"
+    }
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Surface(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxWidth()
+                .height(84.dp),
+            shape = RoundedCornerShape(20.dp),
+            color = Color.White.copy(alpha = 0.4f),
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.5f))
         ) {
-            Image(
-                painter = painterResource(id = item.imageRes),
-                contentDescription = item.title,
+            Row(
                 modifier = Modifier
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(14.dp)),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(item.title, color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                    Text(
-                        "  •  ${item.time}",
-                        color = if (item.isUrgent) Color(0xFFE53935) else Color.Black.copy(alpha = 0.6f),
-                        fontSize = 13.sp,
-                        fontWeight = if (item.isUrgent) FontWeight.SemiBold else FontWeight.Normal
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (!item.imageUri.isNullOrEmpty()) {
+                    AsyncImage(
+                        model = item.imageUri,
+                        contentDescription = item.title,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(14.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    val imgRes =
+                        if (item.imageRes != 0) item.imageRes else R.drawable.ic_launcher_foreground
+                    Image(
+                        painter = painterResource(id = imgRes),
+                        contentDescription = item.title,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(14.dp)),
+                        contentScale = ContentScale.Crop
                     )
                 }
-                Text(item.description, color = Color.Black.copy(alpha = 0.6f), fontSize = 13.sp, maxLines = 1)
-            }
 
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "Options",
-                tint = Color.Black.copy(alpha = 0.4f),
-                modifier = Modifier.size(22.dp)
-            )
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            item.title,
+                            color = Color.White,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "  •  $displayTime",
+                            color = if (item.isUrgent) Color(0xFFE53935) else Color.White.copy(alpha = 0.7f),
+                            fontSize = 13.sp,
+                            fontWeight = if (item.isUrgent) FontWeight.SemiBold else FontWeight.Normal
+                        )
+                    }
+                    Text(
+                        item.description,
+                        color = Color.White.copy(alpha = 0.7f),
+                        fontSize = 13.sp,
+                        maxLines = 1
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.2f))
+                        .clickable { showMenu = !showMenu },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Options",
+                        tint = Color.White,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        }
+
+        if (showMenu) {
+            Popup(
+                alignment = Alignment.CenterEnd,
+                onDismissRequest = { showMenu = false },
+                properties = PopupProperties(focusable = true)
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .padding(end = 12.dp)
+                        .clip(RoundedCornerShape(20.dp)),
+                    color = Color.White.copy(alpha = 0.35f),
+                    border = BorderStroke(1.dp, Color.White.copy(alpha = 0.6f)),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.clickable {
+                                showMenu = false
+                                onEditClick()
+                            },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit",
+                                tint = Color.Black,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = "Edit",
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier.clickable {
+                                showMenu = false
+                                onDeleteClick()
+                            },
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = Color(0xFFE53935),
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Text(
+                                text = "Delete",
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

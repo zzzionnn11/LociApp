@@ -60,6 +60,11 @@ import kotlinx.coroutines.delay
 import java.io.File
 import java.util.Calendar
 import androidx.compose.foundation.horizontalScroll
+import com.example.lociapp.db.ItemRepository
+import com.example.lociapp.models.ItemEntity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /** Keeps the photo + details so every page of the camera flow can use them. */
 object CapturedPhoto {
@@ -272,7 +277,26 @@ fun EditPhotoScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(28.dp))
 
             GlassButton("SAVE PHOTO", modifier = Modifier.fillMaxWidth(0.8f)) {
-                // TODO: save photo + description/time/date (database)
+                val currentDesc = CapturedPhoto.description.trim()
+                val title = if (currentDesc.isNotEmpty()) {
+                    val words = currentDesc.split("\\s+".toRegex()).filter { it.isNotBlank() }
+                    if (words.size >= 2) "${words[0]} ${words[1]}" else words.firstOrNull() ?: "Captured Item"
+                } else {
+                    "Captured Item"
+                }
+                val nowFormatted = SimpleDateFormat("MMM dd 'at' h:mm a", Locale.getDefault()).format(Date())
+
+                val newItem = ItemEntity(
+                    title = title,
+                    description = if (currentDesc.isNotEmpty()) currentDesc else "No description provided",
+                    reminderTime = CapturedPhoto.reminderTime,
+                    reminderDate = CapturedPhoto.reminderDate,
+                    imageUri = CapturedPhoto.uri?.toString(),
+                    imageRes = 0,
+                    addedTime = nowFormatted,
+                    isUrgent = CapturedPhoto.reminderTime.isNotEmpty()
+                )
+                ItemRepository.addItem(newItem)
                 navController.navigate("photo_saved")
             }
             Spacer(modifier = Modifier.height(16.dp))

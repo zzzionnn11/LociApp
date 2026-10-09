@@ -30,11 +30,15 @@ import com.example.lociapp.R
 import com.example.lociapp.components.GlassIconButton
 import com.example.lociapp.components.ScreenHeader
 import com.example.lociapp.db.ItemRepository
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lociapp.viewmodel.ItemsViewModel
 
 @Composable
 fun ItemDetailScreen(navController: NavController, itemId: Int) {
-    val itemsList by ItemRepository.items.collectAsState()
-    val dbItem = remember(itemsList, itemId) { ItemRepository.getItemById(itemId) }
+    val itemsVm: ItemsViewModel = viewModel()
+    val itemsList by itemsVm.items.collectAsStateWithLifecycle()
+    val dbItem = remember(itemsList, itemId) { itemsList.firstOrNull { it.id == itemId } }
 
     val title = dbItem?.title ?: "Item $itemId"
     val description = dbItem?.description ?: "No description available."

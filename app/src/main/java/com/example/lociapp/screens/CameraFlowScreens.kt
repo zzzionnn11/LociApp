@@ -60,7 +60,8 @@ import kotlinx.coroutines.delay
 import java.io.File
 import java.util.Calendar
 import androidx.compose.foundation.horizontalScroll
-import com.example.lociapp.db.ItemRepository
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lociapp.viewmodel.ItemsViewModel
 import com.example.lociapp.models.ItemEntity
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -184,6 +185,7 @@ fun PhotoConfirmScreen(navController: NavController) {
 @Composable
 fun EditPhotoScreen(navController: NavController) {
     val context = LocalContext.current
+    val itemsVm: ItemsViewModel = viewModel()
 
     Box(modifier = Modifier.fillMaxSize().background(editGradient)) {
         Column(
@@ -296,7 +298,7 @@ fun EditPhotoScreen(navController: NavController) {
                     addedTime = nowFormatted,
                     isUrgent = CapturedPhoto.reminderTime.isNotEmpty()
                 )
-                ItemRepository.addItem(newItem)
+                itemsVm.addItem(newItem)
                 navController.navigate("photo_saved")
             }
             Spacer(modifier = Modifier.height(16.dp))

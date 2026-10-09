@@ -6,6 +6,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * Single source of truth for items. Whenever an item is added, edited or
+ * deleted, its reminder is kept in sync (see ReminderRepository), so the
+ * notification always matches what the item says.
+ */
 object ItemRepository {
     private var dbHelper: DatabaseHelper? = null
 
@@ -14,7 +19,7 @@ object ItemRepository {
 
     fun init(context: Context) {
         if (dbHelper == null) {
-            dbHelper = DatabaseHelper(context.applicationContext)
+            dbHelper = DatabaseHelper.getInstance(context)
             refresh()
         }
     }
@@ -28,6 +33,9 @@ object ItemRepository {
         val helper = dbHelper ?: return -1
         val id = helper.insertItem(item)
         refresh()
+        if (id > 0 && item.reminderTime.isNotBlank()) {
+            ReminderRepository.syncForItem(item.copy(id = id.toInt()))
+        }
         return id
     }
 
@@ -40,11 +48,20 @@ object ItemRepository {
         val helper = dbHelper ?: return
         helper.updateItem(item)
         refresh()
+        ReminderRepository.syncForItem(item)
     }
 
     fun deleteItem(id: Int) {
         val helper = dbHelper ?: return
         helper.deleteItem(id)
+        refresh()
+        ReminderRepository.deleteForItem(id)
+    }
+
+    /** Used by "Delete Account". */
+    fun clearAll() {
+        val helper = dbHelper ?: return
+        helper.deleteAllItems()
         refresh()
     }
 }

@@ -10,9 +10,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lociapp.viewmodel.ProfileViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +41,58 @@ import com.example.lociapp.components.GlassIconButton
 
 @Composable
 fun ProfileScreen(navController: NavController) {
+    val viewModel: ProfileViewModel = viewModel()
+    val profile by viewModel.state.collectAsStateWithLifecycle()
+    var showEditDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    fun goToWelcome() {
+        navController.navigate("welcome") { popUpTo(0) { inclusive = true } }
+    }
+
+    if (showEditDialog) {
+        var draftName by remember { mutableStateOf(profile.name) }
+        AlertDialog(
+            onDismissRequest = { showEditDialog = false },
+            title = { Text("Edit profile") },
+            text = {
+                OutlinedTextField(
+                    value = draftName,
+                    onValueChange = { draftName = it },
+                    label = { Text("Name") },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = draftName.isNotBlank(),
+                    onClick = {
+                        viewModel.updateName(draftName)
+                        showEditDialog = false
+                    }
+                ) { Text("Save") }
+            },
+            dismissButton = { TextButton(onClick = { showEditDialog = false }) { Text("Cancel") } }
+        )
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete account?") },
+            text = {
+                Text("This permanently deletes your account, all saved items, photos and reminders from this device. This can't be undone.")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteDialog = false
+                    viewModel.deleteAccount { goToWelcome() }
+                }) { Text("Delete", color = Color(0xFFD32F2F)) }
+            },
+            dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel") } }
+        )
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.settings_page_bg),
@@ -62,7 +125,7 @@ fun ProfileScreen(navController: NavController) {
                 GlassIconButton(
                     icon = Icons.Default.Edit,
                     contentDescription = "Edit profile",
-                    onClick = { },
+                    onClick = { showEditDialog = true },
                     tint = Color.White,
                     containerColor = Color.White.copy(alpha = 0.2f)
                 )
@@ -89,14 +152,16 @@ fun ProfileScreen(navController: NavController) {
 
                 // Name and Subtext in White
                 Text(
-                    text = "John Michael Santos",
+                    text = profile.name,
                     color = Color.White,
                     fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2
                 )
                 
                 Text(
-                    text = "User since July 11, 2026",
+                    text = "User since ${profile.memberSince}",
                     color = Color.Black.copy(alpha = 0.8f),
                     fontSize = 16.sp,
                     modifier = Modifier.padding(top = 4.dp)
@@ -109,10 +174,9 @@ fun ProfileScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .clickable { 
-                             navController.navigate("welcome") {
-                                 popUpTo(0) { inclusive = true }
-                             }
+                        .clickable {
+                            viewModel.signOut()
+                            goToWelcome()
                         },
                     shape = RoundedCornerShape(28.dp),
                     color = Color.White.copy(alpha = 0.15f),
@@ -139,7 +203,7 @@ fun ProfileScreen(navController: NavController) {
                     color = Color(0xFFFF5252), // Bright red to stand out on blue
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    modifier = Modifier.clickable { /* TODO: Delete account */ }
+                    modifier = Modifier.clickable { showDeleteDialog = true }
                 )
             }
         }

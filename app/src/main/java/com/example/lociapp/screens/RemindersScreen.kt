@@ -1,15 +1,23 @@
 package com.example.lociapp.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -17,26 +25,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import com.example.lociapp.R
 import com.example.lociapp.components.BottomNavigationBar
 import com.example.lociapp.components.GlassIconButton
 import com.example.lociapp.components.ScreenHeader
-import com.example.lociapp.models.ReminderItem
+import com.example.lociapp.models.ItemEntity
+import com.example.lociapp.models.ReminderEntity
+import com.example.lociapp.viewmodel.RemindersViewModel
 
 @Composable
 fun RemindersScreen(navController: NavController) {
-    val reminders = remember {
-        listOf(
-            ReminderItem(1, "Tech Book", "URGENT NEEDED AT 10:00 AM!", "10:00 AM", R.drawable.tech_book, isUrgent = true),
-            ReminderItem(2, "Camera in bag", "Bring camera to the function", "12:00 PM", R.drawable.camera, isUrgent = false),
-            ReminderItem(3, "Headphones", "Don't forget the headphones for work", "1:00 PM", R.drawable.headphones, isUrgent = false)
-        )
+    val context = LocalContext.current
+    val viewModel: RemindersViewModel = viewModel()
+    val reminders = viewModel.reminders.collectAsStateWithLifecycle().value
+    val itemsList = viewModel.items.collectAsStateWithLifecycle().value
+
+    // Split into sections. Recomputed whenever the list changes.
+    val now = System.currentTimeMillis()
+    val endOfToday = remember(reminders) {
+        java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 23); set(java.util.Calendar.MINUTE, 59)
+            set(java.util.Calendar.SECOND, 59); set(java.util.Calendar.MILLISECOND, 999)
+        }.timeInMillis
     }
+    val earlier = reminders.filter { it.triggerAtMillis < now }.sortedByDescending { it.triggerAtMillis }
+    val today = reminders.filter { it.triggerAtMillis in now..endOfToday }
+    val upcoming = reminders.filter { it.triggerAtMillis > endOfToday }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -67,12 +90,53 @@ fun RemindersScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("Today", color = Color.Black.copy(alpha = 0.6f), fontSize = 14.sp, fontWeight = FontWeight.Medium)
-            Spacer(modifier = Modifier.height(12.dp))
+            if (reminders.isEmpty()) {
+                Text(
+                    "No reminders yet. Tap + to add one.",
+                    color = Color.Black.copy(alpha = 0.6f),
+                    fontSize = 14.sp
+                )
+            }
 
-            LazyColumn(modifier = Modifier.weight(1f).padding(bottom = 80.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(reminders) { reminder ->
-                    ReminderCard(reminder = reminder)
+            LazyColumn(
+                modifier = Modifier.weight(1f).padding(bottom = 80.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                fun section(title: String, list: List<ReminderEntity>) {
+                    if (list.isEmpty()) return
+                    item(key = "header_$title") {
+                        Text(
+                            title,
+                            color = Color.Black.copy(alpha = 0.6f),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium,
+                            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+                        )
+                    }
+                    items(list, key = { it.id }) { reminder ->
+                        SwipeToDeleteReminder(
+                            reminder = reminder,
+                            item = itemsList.firstOrNull { it.id == reminder.itemId },
+                            onDelete = {
+                                viewModel.delete(reminder.id)
+                                Toast.makeText(context, "Reminder deleted", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
+                }
+                section("Today", today)
+                section("Upcoming", upcoming)
+                section("Earlier", earlier)
+
+                if (reminders.isNotEmpty()) {
+                    item(key = "hint") {
+                        Text(
+                            "Swipe a reminder left to delete it.",
+                            color = Color.Black.copy(alpha = 0.4f),
+                            fontSize = 11.sp,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
                 }
             }
         }
@@ -90,13 +154,57 @@ fun RemindersScreen(navController: NavController) {
 }
 
 @Composable
-fun ReminderCard(reminder: ReminderItem) {
+private fun SwipeToDeleteReminder(
+    reminder: ReminderEntity,
+    item: ItemEntity?,
+    onDelete: () -> Unit
+) {
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                onDelete()
+                true
+            } else {
+                false
+            }
+        }
+    )
+
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromStartToEnd = false,
+        backgroundContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Color(0xFFE53935).copy(alpha = 0.85f))
+                    .padding(end = 24.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Icon(Icons.Default.Delete, "Delete reminder", tint = Color.White)
+            }
+        }
+    ) {
+        ReminderCard(reminder = reminder, item = item)
+    }
+}
+
+@Composable
+fun ReminderCard(reminder: ReminderEntity, item: ItemEntity?) {
+    val urgent = reminder.isUrgent()
+    val subtitle = when {
+        urgent -> "URGENT NEEDED AT ${reminder.time.uppercase()}!"
+        reminder.description.isNotBlank() -> reminder.description
+        else -> listOf(reminder.date, reminder.time).filter { it.isNotBlank() }.joinToString(" at ")
+    }
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .height(84.dp),
         shape = RoundedCornerShape(20.dp),
-        color = if (reminder.isUrgent) Color(0xFFFF4444).copy(alpha = 0.15f) else Color.White.copy(alpha = 0.4f),
+        color = if (urgent) Color(0xFFFF4444).copy(alpha = 0.15f) else Color.White.copy(alpha = 0.4f),
         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.5f))
     ) {
         Row(
@@ -105,30 +213,51 @@ fun ReminderCard(reminder: ReminderItem) {
                 .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = reminder.imageRes),
-                contentDescription = reminder.title,
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(RoundedCornerShape(14.dp)),
-                contentScale = ContentScale.Crop
-            )
+            ReminderThumbnail(item, reminder.title)
 
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
-                if (reminder.isUrgent) {
+                if (urgent) {
                     Text("TIME SENSITIVE", color = Color(0xFFE53935), fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
-                Text(reminder.title, color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(reminder.title, color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                 Text(
-                    reminder.description,
-                    color = if (reminder.isUrgent) Color(0xFFE53935) else Color.Black.copy(alpha = 0.6f),
+                    subtitle,
+                    color = if (urgent) Color(0xFFE53935) else Color.Black.copy(alpha = 0.6f),
                     fontSize = 13.sp,
                     maxLines = 1,
-                    fontWeight = if (reminder.isUrgent) FontWeight.SemiBold else FontWeight.Normal
+                    fontWeight = if (urgent) FontWeight.SemiBold else FontWeight.Normal
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ReminderThumbnail(item: ItemEntity?, title: String) {
+    val modifier = Modifier
+        .size(60.dp)
+        .clip(RoundedCornerShape(14.dp))
+
+    when {
+        item != null && !item.imageUri.isNullOrEmpty() -> AsyncImage(
+            model = item.imageUri,
+            contentDescription = title,
+            modifier = modifier,
+            contentScale = ContentScale.Crop
+        )
+        item != null && item.imageRes != 0 -> Image(
+            painter = painterResource(id = item.imageRes),
+            contentDescription = title,
+            modifier = modifier,
+            contentScale = ContentScale.Crop
+        )
+        else -> Box(
+            modifier = modifier.background(Color.White.copy(alpha = 0.6f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(Icons.Default.Notifications, null, tint = Color.Black.copy(alpha = 0.6f))
         }
     }
 }

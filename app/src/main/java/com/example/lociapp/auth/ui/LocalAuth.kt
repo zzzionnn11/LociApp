@@ -97,6 +97,10 @@ class UserDatabase(context: Context) : SQLiteOpenHelper(context, "loci.db", null
         return writableDatabase.update("users", values, "email = ?", arrayOf(clean(email))) > 0
     }
 
+    /** Removes the account (used by "Delete Account"). */
+    fun deleteUser(email: String): Boolean =
+        writableDatabase.delete("users", "email = ?", arrayOf(clean(email))) > 0
+
     // --- helpers ---
 
     private fun clean(email: String) = email.trim().lowercase()
@@ -133,6 +137,7 @@ object Session {
             .putString("name", "${user.firstName} ${user.lastName}")
             .putBoolean("remember", remember)
             .apply()
+        com.example.lociapp.profile.ProfileRepository.onLogin(user.email)
     }
 
     fun logout() {

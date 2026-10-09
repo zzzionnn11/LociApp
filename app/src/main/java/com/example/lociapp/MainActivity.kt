@@ -24,12 +24,18 @@ import com.example.lociapp.ui.theme.LociAppTheme
 import com.example.lociapp.auth.ui.Session
 
 import com.example.lociapp.db.ItemRepository
+import com.example.lociapp.db.ReminderRepository
+import com.example.lociapp.notifications.NotificationHelper
+import com.example.lociapp.profile.ProfileRepository
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Session.init(applicationContext)
+        ProfileRepository.init(applicationContext)
         ItemRepository.init(applicationContext)
+        ReminderRepository.init(applicationContext)
+        NotificationHelper.createChannel(applicationContext)
         setContent {
             LociAppTheme {
                 Surface(

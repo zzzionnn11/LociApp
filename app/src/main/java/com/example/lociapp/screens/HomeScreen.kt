@@ -45,6 +45,9 @@ import com.example.lociapp.R
 import com.example.lociapp.components.BottomNavigationBar
 import com.example.lociapp.components.GlassIconButton
 import com.example.lociapp.db.ItemRepository
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lociapp.viewmodel.ItemsViewModel
 import com.example.lociapp.models.ItemEntity
 import java.io.File
 import androidx.compose.ui.window.Popup
@@ -54,7 +57,8 @@ private var cameraPermissionAsked = false
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val itemsList by ItemRepository.items.collectAsState()
+    val itemsVm: ItemsViewModel = viewModel()
+    val itemsList by itemsVm.items.collectAsStateWithLifecycle()
     val recentItems = remember(itemsList) { itemsList.take(3) }
 
     val context = LocalContext.current
@@ -247,7 +251,7 @@ fun HomeScreen(navController: NavController) {
                         item = item,
                         onEditClick = { navController.navigate("edit_item/${item.id}") },
                         onDeleteClick = {
-                            ItemRepository.deleteItem(item.id)
+                            itemsVm.deleteItem(item.id)
                             Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show()
                         }
                     )

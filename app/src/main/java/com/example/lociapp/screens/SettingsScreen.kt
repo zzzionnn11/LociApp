@@ -12,6 +12,14 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lociapp.profile.AppLanguage
+import com.example.lociapp.viewmodel.ProfileViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,12 +38,43 @@ import com.example.lociapp.models.SettingsSection
 
 @Composable
 fun SettingsScreen(navController: NavController) {
+    val profileViewModel: ProfileViewModel = viewModel()
+    val profile by profileViewModel.state.collectAsStateWithLifecycle()
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    if (showLanguageDialog) {
+        AlertDialog(
+            onDismissRequest = { showLanguageDialog = false },
+            title = { Text("Language") },
+            text = {
+                Column {
+                    AppLanguage.entries.forEach { language ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { profileViewModel.setLanguage(language) }
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = profile.language == language,
+                                onClick = { profileViewModel.setLanguage(language) }
+                            )
+                            Text(language.label)
+                        }
+                    }
+                }
+            },
+            confirmButton = { TextButton(onClick = { showLanguageDialog = false }) { Text("Done") } }
+        )
+    }
+
     val settingsSections = listOf(
         SettingsSection("Account", listOf(SettingsItem("Profile", Icons.Default.Person, "profile"))),
         SettingsSection("Social", listOf(SettingsItem("About us", Icons.Default.Info, "about"))),
         SettingsSection("Support", listOf(
             SettingsItem("FAQ", Icons.AutoMirrored.Filled.Help, "faq"),
-            SettingsItem("Language", Icons.Default.Language, null)
+            SettingsItem("Language", Icons.Default.Language, "language")
         )),
         SettingsSection("Legal", listOf(
             SettingsItem("Privacy Policy", Icons.Default.Lock, "privacy"),
@@ -71,7 +110,12 @@ fun SettingsScreen(navController: NavController) {
                             SettingsCard(
                                 icon = item.icon,
                                 title = item.title,
-                                onClick = { item.navigationRoute?.let { route -> navController.navigate(route) } }
+                                onClick = {
+                                    item.navigationRoute?.let { route ->
+                                        if (route == "language") showLanguageDialog = true
+                                        else navController.navigate(route)
+                                    }
+                                }
                             )
                         }
                     }

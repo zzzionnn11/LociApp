@@ -36,12 +36,16 @@ import coil3.compose.AsyncImage
 import com.example.lociapp.R
 import com.example.lociapp.components.BottomNavigationBar
 import com.example.lociapp.db.ItemRepository
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lociapp.viewmodel.ItemsViewModel
 import com.example.lociapp.models.ItemEntity
 
 @Composable
 fun ListScreen(navController: NavController) {
     val context = LocalContext.current
-    val itemsList by ItemRepository.items.collectAsState()
+    val itemsVm: ItemsViewModel = viewModel()
+    val itemsList by itemsVm.items.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredItems = remember(itemsList, searchQuery) {
@@ -128,7 +132,7 @@ fun ListScreen(navController: NavController) {
                             item = item,
                             onClick = { navController.navigate("item_detail/${item.id}") },
                             onDeleteClick = {
-                                ItemRepository.deleteItem(item.id)
+                                itemsVm.deleteItem(item.id)
                                 Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show()
                             }
                         )

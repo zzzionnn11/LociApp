@@ -36,6 +36,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.example.lociapp.db.ItemRepository
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lociapp.viewmodel.ItemsViewModel
 import java.util.Calendar
 
 private val AccentBlue = Color(0xFF58B8E8)
@@ -55,7 +58,8 @@ private val quickPicks = listOf(
 @Composable
 fun EditItemScreen(navController: NavController, itemId: Int) {
     val context = LocalContext.current
-    val item = remember(itemId) { ItemRepository.getItemById(itemId) }
+    val itemsVm: ItemsViewModel = viewModel()
+    val item = remember(itemId) { itemsVm.getItem(itemId) }
 
     if (item == null) {
         LaunchedEffect(Unit) {
@@ -89,7 +93,7 @@ fun EditItemScreen(navController: NavController, itemId: Int) {
                 }
 
                 RoundIconButton(Icons.Default.Delete, "Delete", dark = true, size = 34.dp) {
-                    ItemRepository.deleteItem(itemId)
+                    itemsVm.deleteItem(itemId)
                     Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show()
                     navController.navigate("list") {
                         popUpTo("list") { inclusive = true }
@@ -219,7 +223,7 @@ fun EditItemScreen(navController: NavController, itemId: Int) {
                     reminderDate = reminderDate,
                     isUrgent = reminderTime.isNotEmpty()
                 )
-                ItemRepository.updateItem(updatedItem)
+                itemsVm.updateItem(updatedItem)
                 Toast.makeText(context, "Item updated", Toast.LENGTH_SHORT).show()
                 navController.popBackStack()
             }

@@ -22,10 +22,15 @@ import coil3.compose.AsyncImage
 import com.example.lociapp.R
 import com.example.lociapp.components.GlassIconButton
 import com.example.lociapp.db.ItemRepository
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lociapp.viewmodel.ItemsViewModel
 
 @Composable
 fun FullImageScreen(navController: NavController, itemId: Int) {
-    val dbItem = remember(itemId) { ItemRepository.getItemById(itemId) }
+    val itemsVm: ItemsViewModel = viewModel()
+    val itemsList = itemsVm.items.collectAsStateWithLifecycle().value
+    val dbItem = remember(itemsList, itemId) { itemsList.firstOrNull { it.id == itemId } }
 
     Box(
         modifier = Modifier

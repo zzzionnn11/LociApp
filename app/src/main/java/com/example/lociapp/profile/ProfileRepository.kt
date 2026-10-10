@@ -2,7 +2,9 @@ package com.example.lociapp.profile
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import com.example.lociapp.auth.ui.Session
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -17,13 +19,14 @@ data class ProfileState(
     val name: String = "",
     val email: String = "",
     val memberSince: String = "",
-    val language: AppLanguage = AppLanguage.ENGLISH
+    val language: AppLanguage = AppLanguage.ENGLISH,
+    val photoPath: String = ""   // "" means the user has not uploaded a photo yet
 )
 
 /**
- * Profile data in SharedPreferences. Name and "user since" are saved per
- * account email, so signing out and back in brings them back. The language
- * choice belongs to the device, not the account.
+ * Profile data in SharedPreferences. Name, "user since" and photo are saved
+ * per account email, so signing out and back in brings them back. The
+ * language choice belongs to the device, not the account.
  */
 object ProfileRepository {
     private const val PREFS = "loci_profile"
@@ -51,7 +54,16 @@ object ProfileRepository {
         val since = prefs.getString("since_$email", null) ?: today().also {
             if (email.isNotBlank()) prefs.edit().putString("since_$email", it).apply()
         }
-        return ProfileState(name = name, email = email, memberSince = since, language = language)
+        // A new account has no "photo_<email>" entry yet, so this stays "" (empty)
+        val photo = prefs.getString("photo_$email", null) ?: ""
+
+        return ProfileState(
+            name = name,
+            email = email,
+            memberSince = since,
+            language = language,
+            photoPath = photo
+        )
     }
 
     fun saveName(name: String) {
@@ -61,6 +73,28 @@ object ProfileRepository {
 
     fun saveLanguage(language: AppLanguage) {
         prefs.edit().putString(KEY_LANGUAGE, language.code).apply()
+    }
+
+    /**
+     * Copies the picked image into the app's private storage and remembers
+     * its path for this account. We keep our own copy because the Uri from
+     * the gallery may stop working later.
+     */
+    fun savePhoto(context: Context, uri: Uri) {
+        val email = Session.email()
+        if (email.isBlank()) return
+
+        val dir = File(context.filesDir, "profile").apply { mkdirs() }
+
+        // Remove this account's old photo, if any
+        prefs.getString("photo_$email", null)?.let { File(it).delete() }
+
+        // New file name every time so the screen notices the change
+        val file = File(dir, "photo_${System.currentTimeMillis()}.jpg")
+        context.contentResolver.openInputStream(uri)?.use { input ->
+            file.outputStream().use { output -> input.copyTo(output) }
+        }
+        prefs.edit().putString("photo_$email", file.absolutePath).apply()
     }
 
     /** Used by "Delete Account": wipes everything stored here. */

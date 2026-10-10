@@ -1,6 +1,7 @@
 package com.example.lociapp.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lociapp.auth.ui.Session
@@ -29,6 +30,17 @@ class ProfileViewModel(app: Application) : AndroidViewModel(app) {
         _state.value = ProfileRepository.load()
     }
 
+    /** Called by the screen after the user picks an image from the gallery. */
+    fun updatePhoto(uri: Uri) {
+        viewModelScope.launch {
+            // Copying a file can be slow, so do it off the main thread
+            withContext(Dispatchers.IO) {
+                ProfileRepository.savePhoto(getApplication(), uri)
+            }
+            _state.value = ProfileRepository.load()
+        }
+    }
+
     fun setLanguage(language: AppLanguage) {
         ProfileRepository.saveLanguage(language)
         _state.value = ProfileRepository.load()
@@ -49,6 +61,7 @@ class ProfileViewModel(app: Application) : AndroidViewModel(app) {
                 ReminderRepository.clearAll()
                 ItemRepository.clearAll()
                 File(context.filesDir, "photos").deleteRecursively()
+                File(context.filesDir, "profile").deleteRecursively()   // profile pictures
 
                 if (email.isNotBlank()) {
                     val users = UserDatabase(context)

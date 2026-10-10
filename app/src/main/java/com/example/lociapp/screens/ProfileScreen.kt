@@ -1,5 +1,9 @@
 package com.example.lociapp.screens
 
+import android.graphics.BitmapFactory
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,7 +14,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,24 +26,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.style.TextAlign
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lociapp.viewmodel.ProfileViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.lociapp.R
 import com.example.lociapp.auth.ui.AppBackgroundGradient
 import com.example.lociapp.components.BottomNavigationBar
 import com.example.lociapp.components.GlassIconButton
+import com.example.lociapp.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -45,6 +52,32 @@ fun ProfileScreen(navController: NavController) {
     val profile by viewModel.state.collectAsStateWithLifecycle()
     var showEditDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+
+    // Opens the gallery. When the user picks an image, we get its Uri.
+    val photoPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) viewModel.updatePhoto(uri)
+    }
+
+    // Load the saved photo file as a bitmap. Stays null when there is no photo.
+    // It only reloads when profile.photoPath changes.
+    val photoBitmap = remember(profile.photoPath) {
+        if (profile.photoPath.isBlank()) {
+            null
+        } else {
+            BitmapFactory.decodeFile(
+                profile.photoPath,
+                BitmapFactory.Options().apply { inSampleSize = 2 } // half size = less memory
+            )?.asImageBitmap()
+        }
+    }
+
+    fun openGallery() {
+        photoPicker.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }
 
     fun goToWelcome() {
         navController.navigate("welcome") { popUpTo(0) { inclusive = true } }
@@ -121,7 +154,7 @@ fun ProfileScreen(navController: NavController) {
                     tint = Color.White,
                     containerColor = Color.White.copy(alpha = 0.2f)
                 )
-                
+
                 GlassIconButton(
                     icon = Icons.Default.Edit,
                     contentDescription = "Edit profile",
@@ -137,16 +170,62 @@ fun ProfileScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Profile Image
-                Image(
-                    painter = painterResource(id = R.drawable.user_profile),
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier
-                        .size(200.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.2f)),
-                    contentScale = ContentScale.Crop
-                )
+                // Profile picture: empty circle until the user uploads one
+                Box(modifier = Modifier.size(200.dp)) {
+
+                    // The circle (tap it to pick a photo)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.2f))
+                            .clickable { openGallery() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (photoBitmap != null) {
+                            // The user has a photo: show it
+                            Image(
+                                bitmap = photoBitmap,
+                                contentDescription = "Profile Picture",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            // No photo yet: empty placeholder with a hint
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = null,
+                                    tint = Color.White.copy(alpha = 0.8f),
+                                    modifier = Modifier.size(96.dp)
+                                )
+                                Text(
+                                    text = "Add photo",
+                                    color = Color.White.copy(alpha = 0.9f),
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
+
+                    // Small edit badge in the corner: shows the picture can be changed
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(alpha = 0.35f))
+                            .clickable { openGallery() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Change photo",
+                            tint = Color.White,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(28.dp))
 
@@ -159,7 +238,7 @@ fun ProfileScreen(navController: NavController) {
                     textAlign = TextAlign.Center,
                     maxLines = 2
                 )
-                
+
                 Text(
                     text = "User since ${profile.memberSince}",
                     color = Color.Black.copy(alpha = 0.8f),

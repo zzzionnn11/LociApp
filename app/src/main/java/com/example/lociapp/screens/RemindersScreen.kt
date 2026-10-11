@@ -4,9 +4,11 @@ import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -46,8 +48,18 @@ import com.example.lociapp.viewmodel.RemindersViewModel
 fun RemindersScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: RemindersViewModel = viewModel()
-    val reminders = viewModel.reminders.collectAsStateWithLifecycle().value
+    val allReminders = viewModel.reminders.collectAsStateWithLifecycle().value
     val itemsList = viewModel.items.collectAsStateWithLifecycle().value
+
+    // Deduplicate reminders so each item/title appears exactly once.
+    // Prefers manually added reminders (!fromItem) or the newest reminder.
+    val reminders = remember(allReminders) {
+        allReminders
+            .sortedWith(compareBy<ReminderEntity> { it.fromItem }.thenByDescending { it.id })
+            .distinctBy { reminder ->
+                if (reminder.itemId != 0) "item_${reminder.itemId}" else "title_${reminder.title.trim().lowercase()}"
+            }
+    }
 
     // Split into sections. Recomputed whenever the list changes.
     val now = System.currentTimeMillis()
@@ -178,20 +190,23 @@ private fun SwipeToDeleteReminder(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xFFE53935).copy(alpha = 0.85f))
+                    .background(Color(0xFFFF4444).copy(alpha = 0.85f))
                     .padding(end = 24.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                Icon(Icons.Default.Delete, "Delete reminder", tint = Color.White)
             }
         }
     ) {
-        ReminderCard(reminder = reminder, item = item)
+        ReminderCard(reminder = reminder, item = item, onDelete = onDelete)
     }
 }
 
 @Composable
-fun ReminderCard(reminder: ReminderEntity, item: ItemEntity?) {
+fun ReminderCard(
+    reminder: ReminderEntity,
+    item: ItemEntity?,
+    onDelete: () -> Unit = {}
+) {
     val urgent = reminder.isUrgent()
     val subtitle = when {
         urgent -> "URGENT NEEDED AT ${reminder.time.uppercase()}!"
@@ -204,8 +219,11 @@ fun ReminderCard(reminder: ReminderEntity, item: ItemEntity?) {
             .fillMaxWidth()
             .height(84.dp),
         shape = RoundedCornerShape(20.dp),
-        color = if (urgent) Color(0xFFFF4444).copy(alpha = 0.15f) else Color.White.copy(alpha = 0.4f),
-        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.5f))
+        color = if (urgent) Color.White.copy(alpha = 0.15f) else Color.White.copy(alpha = 0.4f),
+        border = BorderStroke(
+            width = if (urgent) 1.5.dp else 1.dp,
+            color = Color.White.copy(alpha = 0.5f)
+        )
     ) {
         Row(
             modifier = Modifier
@@ -219,21 +237,34 @@ fun ReminderCard(reminder: ReminderEntity, item: ItemEntity?) {
 
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.Center) {
                 if (urgent) {
-                    Text("TIME SENSITIVE", color = Color(0xFFE53935), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text("TIME SENSITIVE", color = Color.Black, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                 }
                 Text(reminder.title, color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 1)
                 Text(
                     subtitle,
-                    color = if (urgent) Color(0xFFE53935) else Color.Black.copy(alpha = 0.6f),
+                    color = if (urgent) Color.Black else Color.Black.copy(alpha = 0.6f),
                     fontSize = 13.sp,
                     maxLines = 1,
                     fontWeight = if (urgent) FontWeight.SemiBold else FontWeight.Normal
                 )
             }
-        }
-    }
-}
 
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .clickable { onDelete() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete reminder",
+                    tint = Color.White.copy(alpha = 0.8f),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }    }
+}
 @Composable
 private fun ReminderThumbnail(item: ItemEntity?, title: String) {
     val modifier = Modifier

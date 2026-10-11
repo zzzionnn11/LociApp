@@ -53,12 +53,70 @@ class RemindersViewModel(app: Application) : AndroidViewModel(app) {
         )
 
         viewModelScope.launch {
-            withContext(Dispatchers.IO) { ReminderRepository.add(reminder) }
+            withContext(Dispatchers.IO) {
+                val existing = if (item != null && item.id != 0) {
+                    ReminderRepository.reminders.value.firstOrNull { it.itemId == item.id }
+                } else {
+                    ReminderRepository.reminders.value.firstOrNull { it.title.equals(title, ignoreCase = true) }
+                }
+
+                if (existing != null) {
+                    ReminderRepository.update(
+                        existing.copy(
+                            title = title,
+                            description = note.trim(),
+                            time = time,
+                            date = date,
+                            triggerAtMillis = trigger,
+                            itemId = item?.id ?: existing.itemId,
+                            fromItem = false
+                        )
+                    )
+                } else {
+                    ReminderRepository.add(reminder)
+                }
+
+                val targetItem = item ?: ItemRepository.items.value.firstOrNull {
+                    it.title.equals(title, ignoreCase = true)
+                }
+
+                if (targetItem != null) {
+                    ItemRepository.updateItem(
+                        targetItem.copy(
+                            reminderTime = time,
+                            reminderDate = date,
+                            isUrgent = reminder.isUrgent()
+                        )
+                    )
+                }
+            }
             onResult(SaveResult.Saved(ReminderScheduler.canScheduleExact(getApplication())))
         }
     }
 
     fun delete(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) { ReminderRepository.delete(id) }
+        viewModelScope.launch(Dispatchers.IO) {
+            val reminder = ReminderRepository.reminders.value.firstOrNull { it.id == id }
+            if (reminder != null) {
+                val targetItem = if (reminder.itemId != 0) {
+                    ItemRepository.getItemById(reminder.itemId)
+                } else {
+                    ItemRepository.items.value.firstOrNull {
+                        it.title.equals(reminder.title, ignoreCase = true)
+                    }
+                }
+
+                if (targetItem != null) {
+                    ItemRepository.updateItem(
+                        targetItem.copy(
+                            reminderTime = "",
+                            reminderDate = "",
+                            isUrgent = false
+                        )
+                    )
+                }
+            }
+            ReminderRepository.delete(id)
+        }
     }
 }
